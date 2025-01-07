@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import React, { useRef, useState } from "react";
 
 export default function Services() {
   const [openModal, setOpenModal] = useState(false);
@@ -59,7 +59,7 @@ export default function Services() {
         {SERVICES.map((service) => (
           <article
             key={service.name}
-            className="flex w-full h-auto border rounded px-6 py-4 gap-4 select-none cursor-pointer hover:bg-neutral-100 duration-200 xxs:flex-col"
+            className="flex w-full h-auto border border-neutral-300 rounded px-6 py-4 gap-4 select-none cursor-pointer hover:bg-neutral-100 duration-200 xxs:flex-col"
             onClick={() => handleOpenModal(service)}
           >
             <div className="inline-flex gap-2 items-center">
@@ -79,7 +79,7 @@ export default function Services() {
           </article>
         ))}
       </div>
-      <div className="w-full border rounded-lg py-4 text-center select-none hover:bg-neutral-100 duration-200 cursor-not-allowed">
+      <div className="w-full border border-neutral-300 rounded-lg py-4 text-center select-none hover:bg-neutral-100 duration-200 cursor-not-allowed">
         <span className="text-sm text-neutral-500">Ver todas las suscripciones</span>
       </div>
 
