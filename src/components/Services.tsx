@@ -84,7 +84,7 @@ export default function Services() {
       </div>
 
       {openModal && selectedService && (
-        <div className="flex items-center justify-center w-screen h-screen bg-black/40 absolute top-0 left-0">
+        <div className="flex items-center justify-center w-screen h-screen bg-black/40 fixed top-0 left-0 p-4">
           <div className="bg-white rounded-lg w-[440px] p-10 border border-neutral-300">
             <div className="flex items-center justify-between mb-6 w-full">
                 <div className="inline-flex gap-2 items-center">
