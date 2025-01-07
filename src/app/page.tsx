@@ -1,5 +1,6 @@
 import Calculator from "@/components/Calculator";
 import Header from "@/components/Header";
+import Services from "@/components/Services";
 
 export default function Home() {
   return (
@@ -7,6 +8,7 @@ export default function Home() {
       <main className="w-[440px] mx-4 flex flex-col gap-8 row-start-2 items-center sm:items-start">
         <Header/>
         <Calculator/>
+        <Services/>
       </main>
     </div>
   );

@@ -26,7 +26,7 @@ export default function Calculator() {
 
     return(
         <section className="flex flex-col gap-4 w-full">
-            <input onChange={(e)=>setValue(Number(e.target.value))} type="number" className="font-medium rounded-full h-12 w-full py-2 px-6 border-2 border-neutral-300 hover:border-neutral-400 focus:border-neutral-600" placeholder="0.00"/>
+            <input onChange={(e)=>setValue(Number(e.target.value))} type="number" className="calculatorInput font-medium rounded-full h-12 w-full py-2 px-6 border-2 border-neutral-300 hover:border-neutral-400 focus:border-neutral-600 duration-200" placeholder="0.00"/>
             <div className="flex flex-col gap-2">
                 <div className="flex justify-between">
                     <span className="font-medium">IVA 21%</span>
@@ -50,10 +50,11 @@ export default function Calculator() {
                     <span className="font-medium">Total</span>
                     <div className="flex gap-2">
                         <span className="font-bold text-xl">{'$' + totalValue(value)}</span>
-                        <button className="inline-flex items-center justify-center h-full w-10 rounded-full bg-neutral-200 hover:bg-neutral-300 cursor-pointer" onClick={()=>copyToClipboard(totalValue(value).toString())}><CopyIcon/></button>
+                        <button className="inline-flex items-center justify-center h-full w-10 border border-neutral-300 rounded-full hover:bg-neutral-100 cursor-pointer duration-200" onClick={()=>copyToClipboard(totalValue(value).toString())}><CopyIcon/></button>
                     </div>
                 </div>
             </div>
+            <span className="text-sm text-neutral-500">Los precios pueden variar unos centavos debido al redondeo de decimales.</span>
         </section>
 
     )
