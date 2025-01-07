@@ -8,6 +8,9 @@ const inter = Inter({
 })
 
 export const metadata: Metadata = {
+  icons: {
+    icon: '/favicon.ico', 
+  },
   title: "impuestAR",
   description: "Herramienta para calcular el precio del dólar en Argentina para compras internacionales.",
 };
@@ -18,7 +21,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="es">
       <body
         className={inter.className}
       >
