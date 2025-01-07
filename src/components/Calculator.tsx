@@ -74,7 +74,7 @@ export default function Calculator() {
         event.preventDefault()
     }
 
-    const dropdownArrowRotation = dropdownToggle ? 'rotate-[180deg]' : null
+    const dropdownArrowRotation = dropdownToggle ? 'rotate-[180deg]' : ''
     
     return(
         <section className="flex flex-col gap-4 w-full">
