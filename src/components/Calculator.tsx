@@ -42,11 +42,11 @@ export default function Calculator() {
         return divisaSeleccionada === 'Dólar Crypto' ? 0 : Math.round(value * precioDolar * 0.21)
     }, [value, precioDolar, divisaSeleccionada])
 
-    const ganancias = useMemo(()=> {return divisaSeleccionada === 'Dólar Crypto' || 'Dólar MEP' ? 0 : Math.round(value * precioDolar * 0.21)
+    const ganancias = useMemo(()=> {return divisaSeleccionada === 'Dólar Crypto' || divisaSeleccionada === 'Dólar MEP' ? 0 : Math.round(value * precioDolar * 0.30)
     }, [value, precioDolar, divisaSeleccionada])
 
     const impuestosTotales = useMemo(()=> Math.round(iva + ganancias), [iva, ganancias])
-    const totalValue = useMemo(()=> value*precioDolar + impuestosTotales, [value, precioDolar, impuestosTotales])
+    const totalValue = useMemo(()=> Math.round(value*precioDolar + impuestosTotales), [value, precioDolar, impuestosTotales])
 
     const [dropdownToggle, setDropdownToggle] = useState(false)
     const [dropdownCurrencyToggle, setDropdownCurrencyToggle] = useState(false)
