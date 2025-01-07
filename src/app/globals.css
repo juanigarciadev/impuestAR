@@ -10,6 +10,9 @@
       outline: none;
     }
     input[type="number"]:focus{
-        border: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        outline: none;
     }
   }

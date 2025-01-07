@@ -8,14 +8,13 @@ export default function Calculator() {
 
     fetch('https://dolarapi.com/v1/dolares/oficial')
     .then(response => response.json())
-    .then(data => setPrecioDolar(data.compra))
-
+    .then(data => setPrecioDolar(data.venta))
 
     const [value, setValue] = useState(0)
 
-    const iva = value*precioDolar*0.21
-    const ganancias = value*precioDolar*0.30
-    const impuestosTotales = iva + ganancias
+    const iva = Math.round(value*precioDolar*0.21)
+    const ganancias = Math.round(value*precioDolar*0.30)
+    const impuestosTotales = Math.round(iva + ganancias)
 
     const totalValue = (value: number)=> {
         return value*precioDolar + iva + ganancias
@@ -31,11 +30,11 @@ export default function Calculator() {
             <div className="flex flex-col gap-2">
                 <div className="flex justify-between">
                     <span className="font-medium">IVA 21%</span>
-                    <span>{'$' + value*precioDolar*0.21}</span>
+                    <span>{'$' + iva}</span>
                 </div>
                 <div className="flex justify-between">
                     <span className="font-medium">Ganancias 30%</span>
-                    <span className="font-medium">{'$' + value*precioDolar*0.30}</span>
+                    <span className="font-medium">{'$' + ganancias}</span>
                 </div>
                 <div className="flex flex-col gap-2">
                     <div className="flex justify-between">
