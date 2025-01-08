@@ -120,7 +120,7 @@ export default function Calculator() {
                     </div> : null}
                     <span className="text-xs text-neutral-500">USD</span>
                 </div>
-                <input onChange={(e)=>setValue(Number(e.target.value))} type="number" className="font-medium rounded-full h-12 w-full py-2 px-6 pr-16 border-2 border-neutral-300 hover:border-neutral-400 focus:border-neutral-600 duration-200 dark:bg-neutral-800 dark:border-neutral-700 dark:focus:border-neutral-400 dark:placeholder:text-neutral-500" placeholder="0.00"/>
+                <input onChange={(e)=>setValue(Number(e.target.value))} type="number" className="font-medium rounded-full h-12 w-full py-2 px-6 pr-16 border-2 border-neutral-300 hover:border-neutral-400 focus:border-neutral-600 duration-200 dark:bg-neutral-800 dark:border-neutral-700 dark:focus:border-neutral-400 dark:placeholder:text-neutral-500 dark:text-white" placeholder="0.00"/>
             </form>
             <div className="flex flex-col gap-2">
                 <div className="flex justify-between dark:text-white">
