@@ -5,6 +5,7 @@ import CardIcon from "@/icons/CardIcon";
 import CryptoIcon from "@/icons/CryptoIcon";
 import BankIcon from "@/icons/BankIcon";
 import ChevronDown from "@/icons/ChevronDown";
+import CopyButton from "./CopyButton";
 
 export default function Calculator() {
 
@@ -12,6 +13,7 @@ export default function Calculator() {
     const [precioDolarInicial, setPrecioDolarInicial] = useState(0);
     const [precioDolar, setPrecioDolar] = useState(0);
     const [precioDolarCrypto, setPrecioDolarCrypto] = useState(0);
+    const [precioEuro, setPrecioEuro] = useState(0)
     // const [precioDolarBlue, setPrecioDolarBlue] = useState(0);
 
     // Estado para la divisa seleccionada
@@ -32,6 +34,10 @@ export default function Calculator() {
         fetch('https://dolarapi.com/v1/dolares/cripto')
             .then(response => response.json())
             .then(data => setPrecioDolarCrypto(data.venta));
+
+        fetch('https://dolarapi.com/v1/cotizaciones/eur')
+        .then(response => response.json())
+        .then(data => setPrecioEuro(data.venta));
     }, []); // Solo se ejecuta una vez al montar el componente
 
     // Se recupera el valor del input que el usuario rellena para el cálculo
@@ -62,14 +68,7 @@ export default function Calculator() {
         }
       }
 
-    useEffect(() => {
-        console.log(precioDolar);
-    }, [precioDolar]);
-    
-    const copyToClipboard = (text: string) => {
-        navigator.clipboard.writeText(text)
-    }
-
+    // Se previene el comportamiento por defecto del input
     const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault()
     }
@@ -147,7 +146,7 @@ export default function Calculator() {
                     <span className="font-medium">Total</span>
                     <div className="flex gap-2">
                         <span className="font-bold text-xl">{'$' + totalValue}</span>
-                        <button className="inline-flex items-center justify-center h-full w-10 border border-neutral-300 rounded-full hover:bg-neutral-100 cursor-pointer duration-200" onClick={()=>copyToClipboard(totalValue.toString())}><CopyIcon/></button>
+                        <CopyButton valueToCopy={totalValue}/>
                     </div>
                 </div>
             </div>
