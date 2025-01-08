@@ -16,7 +16,7 @@ export default function CopyButton({ valueToCopy }: { valueToCopy: any }) {
 
 
     return(
-        <button className="inline-flex items-center justify-center h-full w-10 border border-neutral-300 rounded-full hover:bg-neutral-100 cursor-pointer duration-200" onClick={()=>copyToClipboard(valueToCopy)}>{
+        <button className="inline-flex items-center justify-center h-full w-10 border border-neutral-300 rounded-full hover:bg-neutral-100 cursor-pointer duration-200 dark:border-neutral-700 dark:hover:bg-neutral-800 dark:text-white" onClick={()=>copyToClipboard(valueToCopy)}>{
             copied ? <CheckIcon/> : <CopyIcon/>
         }</button>
     )
