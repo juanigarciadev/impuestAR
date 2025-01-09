@@ -134,7 +134,7 @@ export default function Calculator() {
                 <div className="flex flex-col gap-2">
                     <div className="flex justify-between dark:text-white">
                         <span className="font-medium">Sin impuestos</span>
-                        <span className="font-medium">{'$' + value*precioDolar}</span>
+                        <span className="font-medium">{'$' + Math.round(value*precioDolar)}</span>
                     </div>
                     <div className="flex justify-between dark:text-white">
                         <span className="font-medium">Impuestos totales</span>
