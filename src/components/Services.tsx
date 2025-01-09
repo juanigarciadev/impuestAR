@@ -26,7 +26,6 @@ export default function Services() {
     setSelectedService(null);
     setOpenModal(false);
   };
-
   return (
     <section className="flex flex-col w-full gap-2">
       <h3 className="font-bold text-xl text-center dark:text-white">Precios de suscripciones con impuestos</h3>
