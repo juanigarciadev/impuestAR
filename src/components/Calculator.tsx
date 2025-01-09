@@ -1,7 +1,7 @@
 "use client"
 import { FormEvent, useEffect, useMemo, useState } from "react"
 import CardIcon from "@/icons/CardIcon";
-import CryptoIcon from "@/icons/CryptoIcon";
+import CriptoIcon from "@/icons/CriptoIcon";
 import BankIcon from "@/icons/BankIcon";
 import ChevronDown from "@/icons/ChevronDown";
 import CopyButton from "./CopyButton";
@@ -11,7 +11,7 @@ export default function Calculator() {
     // Se setean los valores de los dólares
     const [precioDolarInicial, setPrecioDolarInicial] = useState(0);
     const [precioDolar, setPrecioDolar] = useState(0);
-    const [precioDolarCrypto, setPrecioDolarCrypto] = useState(0);
+    const [precioDolarCripto, setPrecioDolarCripto] = useState(0);
     const [precioEuro, setPrecioEuro] = useState(0)
     // const [precioDolarBlue, setPrecioDolarBlue] = useState(0);
 
@@ -32,7 +32,7 @@ export default function Calculator() {
 
         fetch('https://dolarapi.com/v1/dolares/cripto')
             .then(response => response.json())
-            .then(data => setPrecioDolarCrypto(data.venta));
+            .then(data => setPrecioDolarCripto(data.venta));
 
         fetch('https://dolarapi.com/v1/cotizaciones/eur')
         .then(response => response.json())
@@ -44,10 +44,10 @@ export default function Calculator() {
 
     // Se crean los valores de los impuestos basado en el valor ingresado en el input, el precio del dolar y el porcentaje impositivo
     const iva = useMemo(()=> {
-        return divisaSeleccionada === 'Dólar Crypto' ? 0 : Math.round(value * precioDolar * 0.21)
+        return divisaSeleccionada === 'Dólar Cripto' ? 0 : Math.round(value * precioDolar * 0.21)
     }, [value, precioDolar, divisaSeleccionada])
 
-    const ganancias = useMemo(()=> {return divisaSeleccionada === 'Dólar Crypto' || divisaSeleccionada === 'Dólar MEP' ? 0 : Math.round(value * precioDolar * 0.30)
+    const ganancias = useMemo(()=> {return divisaSeleccionada === 'Dólar Cripto' || divisaSeleccionada === 'Dólar MEP' ? 0 : Math.round(value * precioDolar * 0.30)
     }, [value, precioDolar, divisaSeleccionada])
 
     const impuestosTotales = useMemo(()=> Math.round(iva + ganancias), [iva, ganancias])
@@ -89,13 +89,13 @@ export default function Calculator() {
                         <CardIcon/>
                         <span className="text-sm text-neutral-500">Dólar Tarjeta</span>
                     </div>
-                    <div className="inline-flex gap-2 items-center w-full hover:bg-neutral-100 py-4 px-6 select-none dark:hover:bg-neutral-800" onClick={()=>updateCurrency('Dólar MEP', precioDolarCrypto)}>
+                    <div className="inline-flex gap-2 items-center w-full hover:bg-neutral-100 py-4 px-6 select-none dark:hover:bg-neutral-800" onClick={()=>updateCurrency('Dólar MEP', precioDolarCripto)}>
                         <BankIcon/>
                         <span className="text-sm text-neutral-500">Dólar MEP</span>
                     </div>
-                    <div className="inline-flex gap-2 items-center w-full hover:bg-neutral-100 py-4 px-6 select-none dark:hover:bg-neutral-800" onClick={()=>updateCurrency('Dólar Crypto', precioDolarCrypto)}>
-                        <CryptoIcon/>
-                        <span className="text-sm text-neutral-500">Dólar Crypto</span>
+                    <div className="inline-flex gap-2 items-center w-full hover:bg-neutral-100 py-4 px-6 select-none dark:hover:bg-neutral-800" onClick={()=>updateCurrency('Dólar Cripto', precioDolarCripto)}>
+                        <CriptoIcon/>
+                        <span className="text-sm text-neutral-500">Dólar Cripto</span>
                     </div>
                     {/* <div className="inline-flex gap-2 items-center w-full hover:bg-neutral-100 py-4 px-6 select-none" onClick={()=>updateCurrency('Dólar Blue', precioDolarBlue)}>
                         <span className="text-sm text-neutral-500">Dólar Blue</span>
