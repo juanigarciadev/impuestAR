@@ -1,5 +1,7 @@
 "use client";
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
+import SERVICES from "../app/mocks/servicesMock"
+import Link from "next/link";
 
 export default function Services() {
   const [openModal, setOpenModal] = useState(false);
@@ -9,33 +11,6 @@ export default function Services() {
     logo: string;
     duration: string;
   } | null>(null);
-
-  const SERVICES = [
-    {
-      name: "YouTube",
-      price: 1899,
-      logo: "https://cdn.iconscout.com/icon/free/png-256/free-youtube-104-432560.png?f=webp",
-      duration: "/m",
-    },
-    {
-      name: "Spotify",
-      price: 2499,
-      logo: "https://storage.googleapis.com/pr-newsroom-wp/1/2023/05/Spotify_Primary_Logo_RGB_Green.png",
-      duration: "/m",
-    },
-    {
-      name: "Crunchyroll",
-      price: 3499,
-      logo: "https://static.crunchyroll.com/cxweb/assets/img/og-image.png",
-      duration: "/m",
-    },
-    {
-        name: "Netflix",
-        price: 5173,
-        logo: "https://cdn-icons-png.flaticon.com/512/732/732228.png",
-        duration: "/m",
-      },
-  ];
 
   const handleOpenModal = (service: {
     name: string;
@@ -55,8 +30,8 @@ export default function Services() {
   return (
     <section className="flex flex-col w-full gap-2">
       <h3 className="font-bold text-xl text-center dark:text-white">Precios de suscripciones con impuestos</h3>
-      <div className="w-full grid grid-cols-2 rounded-lg gap-2 xs:flex xs:flex-col">
-        {SERVICES.map((service) => (
+      <div className="w-full flex flex-col rounded-lg gap-2">
+        {SERVICES.slice(0, 6).map((service) => (
           <article
             key={service.name}
             className="flex w-full h-auto border border-neutral-300 rounded px-6 py-4 gap-4 select-none cursor-pointer hover:bg-neutral-100 duration-200 xxs:flex-col dark:bg-neutral-800 dark:border-neutral-700 dark:hover:bg-neutral-900"
@@ -79,9 +54,9 @@ export default function Services() {
           </article>
         ))}
       </div>
-      <div className="w-full border border-neutral-300 rounded-lg py-4 text-center select-none hover:bg-neutral-100 duration-200 cursor-not-allowed dark:bg-neutral-800 dark:border-neutral-700 dark:hover:bg-neutral-900">
+      <Link href={'/servicios'} className="w-full border border-neutral-300 rounded-lg py-4 text-center select-none hover:bg-neutral-100 duration-200 dark:bg-neutral-800 dark:border-neutral-700 dark:hover:bg-neutral-900">
         <span className="text-sm text-neutral-500">Ver todas las suscripciones</span>
-      </div>
+      </Link>
 
       {openModal && selectedService && (
         <div className="flex items-center justify-center w-screen h-screen bg-black/40 fixed top-0 left-0 p-4">

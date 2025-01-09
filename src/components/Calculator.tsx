@@ -125,7 +125,7 @@ export default function Calculator() {
             <div className="flex flex-col gap-2">
                 <div className="flex justify-between dark:text-white">
                     <span className="font-medium">IVA 21%</span>
-                    <span>{'$' + iva}</span>
+                    <span className="font-medium">{'$' + iva}</span>
                 </div>
                 <div className="flex justify-between dark:text-white">
                     <span className="font-medium">Ganancias 30%</span>
