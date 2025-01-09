@@ -1,6 +1,8 @@
 import Calculator from "@/components/Calculator";
 import Header from "@/components/Header";
 import Services from "@/components/Services";
+import SupportBanner from "@/components/Support";
+import UpdateRequest from "@/components/UpdateRequest";
 
 export default function Home() {
   return (
@@ -9,6 +11,10 @@ export default function Home() {
         <Header/>
         <Calculator/>
         <Services/>
+        <div className="flex flex-col w-full gap-3">
+          <SupportBanner/>
+          <UpdateRequest/>
+        </div>
       </main>
     </div>
   );
