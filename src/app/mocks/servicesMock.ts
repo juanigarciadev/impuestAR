@@ -26,7 +26,7 @@ const SERVICES = [
     {
         name: "Disney+",
         price: 3999,
-        logo: "https://cdn.icon-icons.com/icons2/2657/PNG/256/disney_plus_icon_161064.png",
+        logo: "https://res.cloudinary.com/diruiumfk/image/upload/c_crop,w_175,h_175/v1739337077/disney_plus_icon_161064_w5nfjt.png",
         duration: "/m",
     },
     {
