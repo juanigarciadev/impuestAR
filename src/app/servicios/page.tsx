@@ -4,6 +4,7 @@ import { useState } from "react";
 import SERVICES from "../mocks/servicesMock"
 
 export default function servicios() {
+    
     const [openModal, setOpenModal] = useState(false);
     const [selectedService, setSelectedService] = useState<{
         name: string;
