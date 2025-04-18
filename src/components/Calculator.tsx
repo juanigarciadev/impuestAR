@@ -5,6 +5,7 @@ import CriptoIcon from "@/icons/CriptoIcon";
 import BankIcon from "@/icons/BankIcon";
 import ChevronDown from "@/icons/ChevronDown";
 import CopyButton from "./CopyButton";
+import JoystickIcon from "@/icons/JoystickIcon";
 
 export default function Calculator() {
 
@@ -48,7 +49,7 @@ export default function Calculator() {
     }, [value, precioDolar, divisaSeleccionada])
 
     const ganancias = useMemo(() => {
-        return divisaSeleccionada === 'Dólar Cripto' || divisaSeleccionada === 'Dólar MEP' ? 0 : Math.round(value * precioDolar * 0.30)
+        return divisaSeleccionada === 'Dólar Cripto' || divisaSeleccionada === 'Dólar MEP' || divisaSeleccionada === 'Videojuegos' ? 0 : Math.round(value * precioDolar * 0.30)
     }, [value, precioDolar, divisaSeleccionada])
 
     const impuestosTotales = useMemo(() => Math.round(iva + ganancias), [iva, ganancias])
@@ -89,6 +90,10 @@ export default function Calculator() {
                     <div className="inline-flex gap-2 items-center w-full hover:bg-neutral-100 py-4 px-6 select-none dark:hover:bg-neutral-800" onClick={() => updateCurrency('Dólar Tarjeta', precioDolarInicial)}>
                         <CardIcon />
                         <span className="text-sm text-neutral-500">Dólar Tarjeta</span>
+                    </div>
+                    <div className="inline-flex gap-2 items-center w-full hover:bg-neutral-100 py-4 px-6 select-none dark:hover:bg-neutral-800" onClick={() => updateCurrency('Videojuegos', precioDolarInicial)}>
+                        <JoystickIcon />
+                        <span className="text-sm text-neutral-500">Videojuegos</span>
                     </div>
                     <div className="inline-flex gap-2 items-center w-full hover:bg-neutral-100 py-4 px-6 select-none dark:hover:bg-neutral-800" onClick={() => updateCurrency('Dólar MEP', precioDolarCripto)}>
                         <BankIcon />
