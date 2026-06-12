@@ -48,11 +48,11 @@ export default function Calculator() {
         return divisaSeleccionada === 'Dólar Cripto' ? 0 : Math.round(value * precioDolar * 0.21)
     }, [value, precioDolar, divisaSeleccionada])
 
-    const ganancias = useMemo(() => {
-        return divisaSeleccionada === 'Dólar Cripto' || divisaSeleccionada === 'Dólar MEP' || divisaSeleccionada === 'Videojuegos' ? 0 : Math.round(value * precioDolar * 0.30)
-    }, [value, precioDolar, divisaSeleccionada])
+    // const ganancias = useMemo(() => {
+    //     return divisaSeleccionada === 'Dólar Cripto' || divisaSeleccionada === 'Dólar MEP' || divisaSeleccionada === 'Videojuegos' ? 0 : Math.round(value * precioDolar * 0.30)
+    // }, [value, precioDolar, divisaSeleccionada])
 
-    const impuestosTotales = useMemo(() => Math.round(iva + ganancias), [iva, ganancias])
+    const impuestosTotales = useMemo(() => Math.round(iva), [iva])
     const totalValue = useMemo(() => Math.round(value * precioDolar + impuestosTotales), [value, precioDolar, impuestosTotales])
 
     const [dropdownToggle, setDropdownToggle] = useState(false)
@@ -138,10 +138,6 @@ export default function Calculator() {
                 <div className="flex justify-between dark:text-white">
                     <span className="font-medium">IVA 21%</span>
                     <span className="font-medium">{'$' + iva}</span>
-                </div>
-                <div className="flex justify-between dark:text-white">
-                    <span className="font-medium">Ganancias 30%</span>
-                    <span className="font-medium">{'$' + ganancias}</span>
                 </div>
                 <div className="flex flex-col gap-2">
                     <div className="flex justify-between dark:text-white">
