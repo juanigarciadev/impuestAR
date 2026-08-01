@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import SERVICES from "../app/mocks/servicesMock"
 import Link from "next/link";
+import { IVA_RATE, TOTAL_MULTIPLIER } from "@/lib/taxes";
 
 export default function Services() {
   const [openModal, setOpenModal] = useState(false);
@@ -45,7 +46,7 @@ export default function Services() {
               </div>
               <div className="inline-flex items-end">
                 <p className="font-medium text-lg text-neutral-700 dark:text-neutral-400">
-                  ${Math.round(service.price * 1.51)}
+                  ${Math.round(service.price * TOTAL_MULTIPLIER)}
                 </p>
                 <span className="text-sm text-neutral-500">{service.duration}</span>
               </div>
@@ -75,12 +76,12 @@ export default function Services() {
                     <p className="font-medium">${Math.round(selectedService.price)}</p>
                 </div>
                 <div className="inline-flex justify-between w-full dark:text-white">
-                    <p className="font-medium">Impuestos</p>
-                    <p className="font-medium">${Math.round(selectedService.price*0.51)}</p>
+                    <p className="font-medium">IVA 21%</p>
+                    <p className="font-medium">${Math.round(selectedService.price * IVA_RATE)}</p>
                 </div>
                 <div className="inline-flex justify-between w-full dark:text-white">
                     <p className="font-medium">Total</p>
-                    <p className="font-medium text-xl">${Math.round(selectedService.price * 1.51)}</p>
+                    <p className="font-medium text-xl">${Math.round(selectedService.price * TOTAL_MULTIPLIER)}</p>
                 </div>
                 <span className="text-sm text-neutral-500 mt-4">Los precios pueden variar unos centavos debido al redondeo de decimales.</span>
             </section>

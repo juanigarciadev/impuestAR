@@ -6,6 +6,7 @@ import BankIcon from "@/icons/BankIcon";
 import ChevronDown from "@/icons/ChevronDown";
 import CopyButton from "./CopyButton";
 import JoystickIcon from "@/icons/JoystickIcon";
+import { IVA_RATE } from "@/lib/taxes";
 
 export default function Calculator() {
 
@@ -45,12 +46,8 @@ export default function Calculator() {
 
     // Se crean los valores de los impuestos basado en el valor ingresado en el input, el precio del dolar y el porcentaje impositivo
     const iva = useMemo(() => {
-        return divisaSeleccionada === 'Dólar Cripto' ? 0 : Math.round(value * precioDolar * 0.21)
+        return divisaSeleccionada === 'Dólar Cripto' ? 0 : Math.round(value * precioDolar * IVA_RATE)
     }, [value, precioDolar, divisaSeleccionada])
-
-    // const ganancias = useMemo(() => {
-    //     return divisaSeleccionada === 'Dólar Cripto' || divisaSeleccionada === 'Dólar MEP' || divisaSeleccionada === 'Videojuegos' ? 0 : Math.round(value * precioDolar * 0.30)
-    // }, [value, precioDolar, divisaSeleccionada])
 
     const impuestosTotales = useMemo(() => Math.round(iva), [iva])
     const totalValue = useMemo(() => Math.round(value * precioDolar + impuestosTotales), [value, precioDolar, impuestosTotales])
