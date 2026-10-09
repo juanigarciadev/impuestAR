@@ -16,3 +16,62 @@
         outline: none;
     }
 }
+
+@layer base {
+    html { -webkit-tap-highlight-color: transparent; }
+    :focus-visible { outline: 2px solid #2563eb; outline-offset: 2px; }
+}
+
+@layer utilities {
+    .animate-fade-up { animation: fade-up .5s ease-out both; }
+    .animate-fade-in { animation: fade-in .2s ease-out both; }
+    .animate-pop { animation: pop .2s ease-out both; }
+}
+
+@keyframes fade-up { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes pop { from { opacity: 0; transform: scale(.96); } to { opacity: 1; transform: none; } }
+
+@media (prefers-reduced-motion: reduce) {
+    .animate-fade-up, .animate-fade-in, .animate-pop { animation: none; }
+}
+
+/* Fondo decorativo: destellos azul y ámbar (colores del logo) y una grilla de puntos que se desvanece */
+.bg-glow {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    overflow: hidden;
+    background:
+        radial-gradient(60rem 28rem at 50% -8rem, rgba(37, 99, 235, .16), transparent 70%),
+        radial-gradient(28rem 20rem at 92% 12%, rgba(251, 191, 36, .14), transparent 70%),
+        radial-gradient(32rem 22rem at 4% 62%, rgba(37, 99, 235, .08), transparent 70%);
+}
+
+.bg-glow::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(rgba(115, 115, 115, .28) 1px, transparent 1px);
+    background-size: 22px 22px;
+    -webkit-mask-image: radial-gradient(ellipse 70% 55% at 50% 0%, #000 20%, transparent 75%);
+    mask-image: radial-gradient(ellipse 70% 55% at 50% 0%, #000 20%, transparent 75%);
+}
+
+.dark .bg-glow {
+    background:
+        radial-gradient(60rem 28rem at 50% -8rem, rgba(59, 130, 246, .26), transparent 70%),
+        radial-gradient(28rem 20rem at 92% 12%, rgba(251, 191, 36, .10), transparent 70%),
+        radial-gradient(32rem 22rem at 4% 62%, rgba(59, 130, 246, .12), transparent 70%);
+}
+
+.dark .bg-glow::after {
+    background-image: radial-gradient(rgba(255, 255, 255, .16) 1px, transparent 1px);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .bg-glow { animation: glow-breathe 10s ease-in-out infinite alternate; }
+}
+
+@keyframes glow-breathe { from { opacity: .8; } to { opacity: 1; } }

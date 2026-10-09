@@ -1,23 +1,22 @@
 "use client"
-import CheckIcon from "@/icons/CheckIcon"
-import CopyIcon from "@/icons/CopyIcon"
+import { Check, Copy } from "lucide-react"
 import { useState } from "react"
+import { Button } from "./ui/Button"
 
-export default function CopyButton({ valueToCopy }: { valueToCopy: any }) {
-
-    // Funciones necesarias para el boton de copiar valor total
+export default function CopyButton({ valueToCopy }: { valueToCopy: string | number }) {
     const [copied, setCopied] = useState(false)
-    const copyToClipboard = (value: any) => {
-        const text = typeof value === "object" ? JSON.stringify(value, null, 2) : value.toString()
-        navigator.clipboard.writeText(text)
-        setCopied(true)
-        setTimeout(() => setCopied(false), 2000) // Resetear el estado después de 2 segundos
+
+    const copyToClipboard = async () => {
+        try {
+            await navigator.clipboard.writeText(String(valueToCopy))
+            setCopied(true)
+            setTimeout(() => setCopied(false), 2000)
+        } catch {
+            // Portapapeles no disponible (contexto inseguro o permiso denegado)
+        }
     }
 
-
-    return(
-        <button className="inline-flex items-center justify-center h-full w-10 border border-neutral-300 rounded-full hover:bg-neutral-100 cursor-pointer duration-200 dark:border-neutral-700 dark:hover:bg-neutral-800 dark:text-white" onClick={()=>copyToClipboard(valueToCopy)}>{
-            copied ? <CheckIcon/> : <CopyIcon/>
-        }</button>
+    return (
+        <Button color="secondary" rounded className="!p-2.5" aria-label={copied ? "Total copiado" : "Copiar total"} onClick={copyToClipboard} icon={copied ? <Check size={16} /> : <Copy size={16} />} />
     )
 }

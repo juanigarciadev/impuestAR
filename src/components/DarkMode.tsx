@@ -1,11 +1,12 @@
 "use client"
-import MoonIcon from "@/icons/MoonIcon";
+import { Moon, Sun } from "lucide-react";
 import { useTheme } from "../app/context/ThemeProvider";
+import { Button } from "./ui/Button";
 
 export default function DarkMode() {
     const { isDarkMode, toggleTheme } = useTheme();
 
     return(
-        <button className="p-1.5 border rounded-lg cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-800 dark:border-neutral-700 dark:text-white" onClick={toggleTheme}><MoonIcon/></button>
+        <Button color="secondary" rounded className="!p-2" aria-label={isDarkMode ? "Activar modo claro" : "Activar modo oscuro"} aria-pressed={isDarkMode} onClick={toggleTheme} icon={isDarkMode ? <Sun size={20} /> : <Moon size={20} />} />
     )
 }

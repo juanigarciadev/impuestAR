@@ -13,11 +13,8 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
   const [isDarkMode, setIsDarkMode] = useState(false);
 
   useEffect(() => {
-    const savedTheme = localStorage.getItem("theme");
-    if (savedTheme === "dark") {
-      setIsDarkMode(true);
-      document.documentElement.classList.add("dark");
-    }
+    // La clase "dark" ya la aplica el script inline del layout antes de hidratar
+    setIsDarkMode(document.documentElement.classList.contains("dark"));
   }, []);
 
   const toggleTheme = () => {

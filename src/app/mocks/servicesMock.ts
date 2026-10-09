@@ -32,7 +32,7 @@ const SERVICES = [
     {
         name: "max",
         price: 6590,
-        logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/ce/Max_logo.svg/1024px-Max_logo.svg.png",
+        logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/ce/Max_logo.svg/250px-Max_logo.svg.png",
         duration: "/m",
     },
     {
@@ -44,7 +44,7 @@ const SERVICES = [
     {
         name: "Apple TV",
         price: 7381,
-        logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/AppleTVLogo.svg/1200px-AppleTVLogo.svg.png",
+        logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/AppleTVLogo.svg/250px-AppleTVLogo.svg.png",
         duration: "/m",
     },
     {
