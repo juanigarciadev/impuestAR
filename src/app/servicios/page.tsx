@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { ArrowLeft } from "lucide-react";
-import { ButtonLink } from "@/components/ui/Button";
+import { ButtonLink } from "@/components/ButtonLink";
 import SERVICES from "../mocks/servicesMock"
 import ServiceModal, { Service } from "@/components/ServiceModal";
 import ServiceCard from "@/components/ServiceCard";

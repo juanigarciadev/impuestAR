@@ -2,10 +2,15 @@
 
 import { useState, type ReactNode } from 'react'
 
+const ACCENT_VAR = 'var(--blossom-accent,#f472b6)'
+
 export type AlertColor = 'default' | 'dark' | 'red' | 'green' | 'yellow'
 
 export interface AlertProps {
-    color?: AlertColor
+    /** Accessible name of the dismiss button. */
+    dismissLabel?: string
+    /** A preset, `accent` for the brand color or any CSS color, for example `#7c3aed`. A custom color is used for the border, the icon and a soft tint of the background. */
+    color?: AlertColor | (string & {})
     /** `accent` adds a thick border on the left side. */
     variant?: 'filled' | 'outlined' | 'accent'
     /** Show an icon that matches the color. */
@@ -33,7 +38,7 @@ const text: Record<AlertColor, string> = {
     dark: 'text-neutral-900 dark:text-white',
     red: 'text-red-900 dark:text-red-300',
     green: 'text-green-900 dark:text-green-300',
-    yellow: 'text-yellow-600 dark:text-yellow-200',
+    yellow: 'text-yellow-900 dark:text-yellow-100',
 }
 
 const outline: Record<AlertColor, string> = {
@@ -60,9 +65,12 @@ const icons: Record<AlertColor, string> = {
     yellow: 'M12 2L1 21h22L12 2zm0 4.5L19.5 19h-15L12 6.5zM11 10h2v4h-2zm0 5h2v2h-2z',
 }
 
-const actionButton = 'rounded-xl px-4 py-1 text-sm font-medium select-none'
+const isPreset = (color: string): color is AlertColor => color in box
 
-export const Alert = ({ color = 'default', variant = 'filled', showIcon = false, list, actions, dismissible = false, onDismiss, children }: AlertProps) => {
+const actionButton = 'rounded-lg px-4 py-1 text-sm font-medium select-none'
+
+export const Alert = ({ dismissLabel = 'Dismiss alert', color: colorProp = 'default', variant = 'filled', showIcon = false, list, actions, dismissible = false, onDismiss, children }: AlertProps) => {
+    const color = colorProp === 'accent' ? ACCENT_VAR : colorProp
     const [visible, setVisible] = useState(true)
     if (!visible) return null
 
@@ -71,28 +79,38 @@ export const Alert = ({ color = 'default', variant = 'filled', showIcon = false,
         onDismiss?.()
     }
 
+    const preset = isPreset(color)
+    const customStyle = preset
+        ? undefined
+        : {
+            backgroundColor: `color-mix(in srgb, ${color} ${variant === 'filled' ? 16 : 10}%, transparent)`,
+            ...(variant === 'outlined' ? { border: `1px solid ${color}` } : {}),
+            ...(variant === 'accent' ? { borderLeft: `4px solid ${color}` } : {}),
+        }
+
     return (
         <div
             role='alert'
-            className={`h-fit w-full px-4 py-4 ${box[color]} ${variant === 'outlined' ? `rounded-xl ${outline[color]}` : variant === 'accent' ? `rounded-r-xl ${accent[color]}` : 'rounded-xl'} ${text[color]}`}
+            className={`h-fit w-full px-4 py-4 ${preset ? `${box[color]} ${text[color]}` : 'text-neutral-900 dark:text-white'} ${variant === 'outlined' ? `rounded-xl ${preset ? outline[color] : ''}` : variant === 'accent' ? `rounded-r-xl ${preset ? accent[color] : ''}` : 'rounded-xl'}`}
+            style={customStyle}
         >
             <div className='flex items-start gap-2'>
                 {showIcon && (
-                    <svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' className='shrink-0' aria-hidden='true'>
-                        <path fill='currentColor' d={icons[color]} />
+                    <svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' className='shrink-0' style={preset ? undefined : { color }} aria-hidden='true'>
+                        <path fill='currentColor' d={icons[preset ? color : 'default']} />
                     </svg>
                 )}
                 <div className='flex flex-1 flex-col gap-3'>
                     <span className={showIcon ? 'pt-0.5' : ''}>{children}</span>
                     {list && (
                         <ul className='list-disc pl-5'>
-                            {list.map((item) => <li key={item}>{item}</li>)}
+                            {list.map((item, index) => <li key={`${item}-${index}`}>{item}</li>)}
                         </ul>
                     )}
                     {actions && <div className='flex flex-wrap gap-2'>{actions}</div>}
                 </div>
                 {dismissible && (
-                    <button type='button' aria-label='Dismiss alert' onClick={dismiss} className='-m-1 shrink-0 rounded p-1 hover:bg-black/10 dark:hover:bg-white/10'>
+                    <button type='button' aria-label={dismissLabel} onClick={dismiss} className='-m-1 shrink-0 rounded-lg p-1 hover:bg-black/10 dark:hover:bg-white/10'>
                         <svg width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='2.5' strokeLinecap='round'><path d='M6 6l12 12M18 6 6 18' /></svg>
                     </button>
                 )}

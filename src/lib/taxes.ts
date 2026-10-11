@@ -89,3 +89,16 @@ export function calcTaxes(base: number, settings: TaxSettings, applies: TaxAppli
   const rounded = Math.round(base)
   return { base: rounded, iva, iibb, percepcion, total: rounded + iva + iibb + percepcion }
 }
+
+// Tarjeta local de ARQ: se paga con saldo propio en dólares, por lo que no se cobra IVA, IIBB ni percepción.
+// ARQ usa su propia cotización, que hoy ronda un 2,3% sobre la oficial (1.570,62 vs. 1.535 según Steamcito).
+// Es una estimación: no hay una API pública con la cotización de ARQ.
+export const ARQ_RATE_PREMIUM = 0.023
+
+/** Total en pesos de una compra en dólares pagada con la tarjeta local de ARQ, a partir del dólar oficial. */
+export function calcArqTotal(usd: number, officialRate: number): number {
+  // Siempre hacia arriba. Se redondea antes a 2 decimales para que el error de punto flotante
+  // (p. ej. 1000.0000000001) no sume un peso de más.
+  const exact = Math.round(usd * officialRate * (1 + ARQ_RATE_PREMIUM) * 100) / 100
+  return Math.ceil(exact)
+}

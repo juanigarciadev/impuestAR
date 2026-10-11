@@ -2,10 +2,15 @@
 
 import { forwardRef, useCallback, useEffect, useId, useLayoutEffect, useRef, useState, type CSSProperties, type InputHTMLAttributes, type KeyboardEvent, type ReactNode, type RefObject, type TextareaHTMLAttributes } from 'react'
 import { createPortal } from 'react-dom'
+import { accentStyle } from './accent'
 
 type State = 'default' | 'success' | 'error'
 
 export interface FieldProps {
+    /** Marks the field as required: an asterisk is shown next to the label. */
+    required?: boolean
+    /** Accent color of this field: any CSS color. Without it the field uses `--blossom-accent`, which is pink by default. */
+    color?: string
     label?: string
     /** Helper text shown under the field. */
     hint?: string
@@ -18,7 +23,7 @@ export interface FieldProps {
 const stateOf = (error?: string, success?: string): State => (error ? 'error' : success ? 'success' : 'default')
 
 const control: Record<State, string> = {
-    default: 'border-neutral-300 focus:border-blue-600 focus:ring-blue-600/30 dark:border-neutral-700',
+    default: 'border-neutral-300 text-neutral-900 focus:border-[var(--blossom-accent,#f472b6)] focus:ring-[color-mix(in_srgb,var(--blossom-accent,#f472b6)_30%,transparent)] dark:border-neutral-700 dark:text-white',
     success: 'border-green-500 bg-green-50 text-green-900 focus:ring-green-500/30 dark:bg-green-900/20 dark:text-green-200',
     error: 'border-red-500 bg-red-50 text-red-900 focus:ring-red-500/30 dark:bg-red-900/20 dark:text-red-200',
 }
@@ -32,12 +37,12 @@ const message: Record<State, string> = {
 const base = 'w-full rounded-xl border bg-transparent px-3 py-2.5 text-sm outline-none placeholder:text-neutral-400 focus:ring-2 disabled:cursor-not-allowed disabled:opacity-60'
 
 /** Label, control and message of every field. */
-const Field = ({ id, label, hint, error, success, children }: FieldProps & { id: string; children: ReactNode }) => {
+const Field = ({ id, label, hint, error, success, color, required, children }: FieldProps & { id: string; children: ReactNode }) => {
     const state = stateOf(error, success)
     const text = error ?? success ?? hint
     return (
-        <div className='flex w-full flex-col gap-1'>
-            {label && <label htmlFor={id} className='text-sm font-medium text-neutral-800 dark:text-white'>{label}</label>}
+        <div className='flex w-full flex-col gap-1' style={accentStyle(color)}>
+            {label && <label htmlFor={id} className='text-sm font-medium text-neutral-800 dark:text-white'>{label}{required && <span aria-hidden='true' className='ml-0.5 text-red-600 dark:text-red-400'>*</span>}</label>}
             {children}
             {text && <span id={`${id}-message`} className={`text-xs ${message[state]}`}>{text}</span>}
         </div>
@@ -49,11 +54,11 @@ export interface InputProps extends InputHTMLAttributes<HTMLInputElement>, Field
     icon?: ReactNode
 }
 
-export const Input = forwardRef<HTMLInputElement, InputProps>(({ label, hint, error, success, icon, className = '', ...props }, ref) => {
+export const Input = forwardRef<HTMLInputElement, InputProps>(({ label, hint, error, success, color, icon, className = '', ...props }, ref) => {
     const id = useId()
     const state = stateOf(error, success)
     return (
-        <Field id={id} label={label} hint={hint} error={error} success={success}>
+        <Field id={id} label={label} hint={hint} error={error} success={success} color={color} required={props.required}>
             <div className='relative'>
                 {icon && <span className='pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400'>{icon}</span>}
                 <input
@@ -72,12 +77,12 @@ Input.displayName = 'Input'
 
 export interface TextareaProps extends TextareaHTMLAttributes<HTMLTextAreaElement>, FieldProps {}
 
-export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(({ label, hint, error, success, className = '', rows = 4, ...props }, ref) => {
+export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(({ label, hint, error, success, color, className = '', rows = 4, ...props }, ref) => {
     const id = useId()
     const state = stateOf(error, success)
     return (
-        <Field id={id} label={label} hint={hint} error={error} success={success}>
-            <textarea ref={ref} id={id} rows={rows} aria-invalid={state === 'error'} className={`${base} resize-none ${control[state]} ${className}`} {...props} />
+        <Field id={id} label={label} hint={hint} error={error} success={success} color={color} required={props.required}>
+            <textarea ref={ref} id={id} rows={rows} aria-invalid={state === 'error'} aria-describedby={error ?? success ?? hint ? `${id}-message` : undefined} className={`${base} resize-none ${control[state]} ${className}`} {...props} />
         </Field>
     )
 })
@@ -87,7 +92,13 @@ export interface SelectOption {
     value: string
     label: string
     disabled?: boolean
+    /** Image shown before the label, for example a flag. It is decorative: the label names the option. */
+    image?: string
 }
+
+/** Small round image of an option. */
+const optionImage = (src?: string) =>
+    src ? <img src={src} alt='' aria-hidden='true' className='h-5 w-5 shrink-0 rounded-full bg-neutral-200 object-cover dark:bg-neutral-700' /> : null
 
 interface Position {
     top: number
@@ -142,6 +153,7 @@ const useFloatingList = (open: boolean, close: () => void, anchor: RefObject<HTM
 /** A compact select keeps a readable list: at least `compactListWidth` wide and aligned to the right edge of its trigger. */
 const compactListWidth = 224
 
+// Local change: `compact` is not part of the library.
 const listStyle = (position: Position, compact = false): CSSProperties => {
     const width = compact ? Math.max(position.width, compactListWidth) : position.width
     const left = compact ? Math.max(8, position.left + position.width - width) : position.left
@@ -157,7 +169,7 @@ const chevron = (open: boolean, small = false) => (
 )
 
 const checkMark = (
-    <svg className='h-4 w-4 text-blue-500' aria-hidden='true' xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='currentColor' strokeWidth='3'>
+    <svg className='h-4 w-4 text-[color-mix(in_srgb,var(--blossom-accent,#f472b6)_85%,black)]' aria-hidden='true' xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='currentColor' strokeWidth='3'>
         <path strokeLinecap='round' strokeLinejoin='round' d='m5 12 5 5L20 7' />
     </svg>
 )
@@ -187,7 +199,7 @@ export interface SelectProps extends FieldProps {
 }
 
 /** A fully custom select: keyboard navigation, type to jump to an option and a list rendered in a portal. */
-export const Select = ({ label, hint, error, success, options, value, defaultValue = '', onChange, placeholder = 'Select an option', name, disabled = false, className = '', compact = false }: SelectProps) => {
+export const Select = ({ required, color, label, hint, error, success, options, value, defaultValue = '', onChange, placeholder = 'Select an option', name, disabled = false, className = '', compact = false }: SelectProps) => {
     const id = useId()
     const state = stateOf(error, success)
     const text = error ?? success ?? hint
@@ -199,6 +211,7 @@ export const Select = ({ label, hint, error, success, options, value, defaultVal
     const trigger = useRef<HTMLButtonElement>(null)
     const list = useRef<HTMLUListElement>(null)
     const typed = useRef({ text: '', timer: 0 })
+    useEffect(() => () => window.clearTimeout(typed.current.timer), [])
 
     const close = useCallback(() => setOpen(false), [])
     const position = useFloatingList(open, close, trigger, list)
@@ -227,6 +240,19 @@ export const Select = ({ label, hint, error, success, options, value, defaultVal
     }, [open, active, id])
 
     const onKeyDown = (event: KeyboardEvent<HTMLButtonElement>) => {
+        // While a name is being typed, the space belongs to it and does not choose the option.
+        if (event.key === ' ' && typed.current.text) {
+            event.preventDefault()
+            window.clearTimeout(typed.current.timer)
+            typed.current.text += ' '
+            typed.current.timer = window.setTimeout(() => (typed.current.text = ''), 600)
+            const match = options.findIndex((option) => !option.disabled && option.label.toLowerCase().startsWith(typed.current.text))
+            if (match >= 0) {
+                if (!open) openList(match)
+                else setActive(match)
+            }
+            return
+        }
         switch (event.key) {
             case 'ArrowDown':
             case 'ArrowUp':
@@ -272,8 +298,8 @@ export const Select = ({ label, hint, error, success, options, value, defaultVal
     }
 
     return (
-        <div className={compact ? 'inline-flex' : 'flex w-full flex-col gap-1'}>
-            {label && <span id={`${id}-label`} onClick={() => trigger.current?.focus()} className='text-sm font-medium text-neutral-800 dark:text-white'>{label}</span>}
+        <div className={compact ? 'inline-flex' : 'flex w-full flex-col gap-1'} style={accentStyle(color)}>
+            {label && <span id={`${id}-label`} onClick={() => trigger.current?.focus()} className='text-sm font-medium text-neutral-800 dark:text-white'>{label}{required && <span aria-hidden='true' className='ml-0.5 text-red-600 dark:text-red-400'>*</span>}</span>}
             <button
                 ref={trigger}
                 id={id}
@@ -286,19 +312,24 @@ export const Select = ({ label, hint, error, success, options, value, defaultVal
                 aria-labelledby={label ? `${id}-label ${id}` : undefined}
                 aria-activedescendant={open && active >= 0 ? `${id}-option-${active}` : undefined}
                 aria-invalid={state === 'error'}
+                aria-required={required || undefined}
+                aria-describedby={text ? `${id}-message` : undefined}
                 onClick={() => (open ? setOpen(false) : openList())}
                 onKeyDown={onKeyDown}
                 className={compact
-                    ? `flex w-fit items-center gap-1 rounded-full border border-neutral-300 bg-white px-3 py-1.5 text-xs font-medium text-neutral-600 outline-none hover:bg-neutral-100 focus-visible:ring-2 focus-visible:ring-blue-600/40 disabled:cursor-not-allowed disabled:opacity-60 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-300 dark:hover:bg-neutral-800 ${className}`
+                    ? `flex w-fit items-center gap-1 rounded-full border border-neutral-300 bg-white px-3 py-1.5 text-xs font-medium text-neutral-600 outline-none hover:bg-neutral-100 focus-visible:ring-2 focus-visible:ring-[var(--blossom-accent,#f472b6)] disabled:cursor-not-allowed disabled:opacity-60 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-300 dark:hover:bg-neutral-800 ${className}`
                     : `${base} flex items-center justify-between gap-2 text-left focus:ring-2 ${open ? 'ring-2' : ''} ${control[state]} ${className}`}
             >
-                <span className={`truncate ${selected ? '' : 'text-neutral-400'}`}>{selected ? (compact ? selected.value : selected.label) : placeholder}</span>
+                <span className={`flex min-w-0 items-center gap-2 ${selected ? (compact ? '' : 'text-neutral-900 dark:text-white') : 'text-neutral-400'}`}>
+                    {optionImage(selected?.image)}
+                    <span className='truncate'>{selected ? (compact ? selected.value : selected.label) : placeholder}</span>
+                </span>
                 {chevron(open, compact)}
             </button>
             {name && <input type='hidden' name={name} value={current} />}
-            {text && <span className={`text-xs ${message[state]}`}>{text}</span>}
+            {text && <span id={`${id}-message`} className={`text-xs ${message[state]}`}>{text}</span>}
             {open && position && createPortal(
-                <ul ref={list} id={`${id}-list`} role='listbox' aria-labelledby={label ? `${id}-label` : undefined} className={listBox} style={listStyle(position, compact)}>
+                <ul ref={list} id={`${id}-list`} role='listbox' aria-labelledby={label ? `${id}-label` : undefined} className={listBox} style={accentStyle(color, listStyle(position, compact))}>
                     {options.map((option, index) => (
                         <li
                             key={option.value}
@@ -308,9 +339,12 @@ export const Select = ({ label, hint, error, success, options, value, defaultVal
                             aria-disabled={option.disabled}
                             onPointerEnter={() => !option.disabled && setActive(index)}
                             onClick={() => select(option)}
-                            className={`flex cursor-pointer items-center justify-between rounded-lg px-3 py-2 ${option.disabled ? 'cursor-not-allowed opacity-40' : ''} ${index === active ? 'bg-blue-100 text-blue-900 dark:bg-blue-950 dark:text-blue-200' : 'text-neutral-800 dark:text-neutral-200'}`}
+                            className={`flex cursor-pointer items-center justify-between rounded-lg px-3 py-2 ${option.disabled ? 'cursor-not-allowed opacity-40' : ''} ${index === active ? 'bg-[color-mix(in_srgb,var(--blossom-accent,#f472b6)_18%,transparent)] text-[color-mix(in_srgb,var(--blossom-accent,#f472b6)_45%,black)] dark:bg-[color-mix(in_srgb,var(--blossom-accent,#f472b6)_20%,transparent)] dark:text-[color-mix(in_srgb,var(--blossom-accent,#f472b6)_45%,white)]' : 'text-neutral-800 dark:text-neutral-200'}`}
                         >
-                            {option.label}
+                            <span className='flex min-w-0 items-center gap-2'>
+                                {optionImage(option.image)}
+                                <span className='truncate'>{option.label}</span>
+                            </span>
                             {option.value === current && checkMark}
                         </li>
                     ))}
@@ -322,6 +356,8 @@ export const Select = ({ label, hint, error, success, options, value, defaultVal
 }
 
 export interface MultiSelectProps extends FieldProps {
+    /** Text shown when the search does not match any option. */
+    noResultsLabel?: string
     options: SelectOption[]
     /** Controlled list of selected values. Use together with `onChange`. */
     value?: string[]
@@ -337,7 +373,7 @@ export interface MultiSelectProps extends FieldProps {
 }
 
 /** Select several options. Selected values are shown as chips and the text field filters the list. */
-export const MultiSelect = ({ label, hint, error, success, options, value, defaultValue = [], onChange, placeholder = 'Select options', name, max, disabled = false, className = '' }: MultiSelectProps) => {
+export const MultiSelect = ({ required, noResultsLabel = 'No results', color, label, hint, error, success, options, value, defaultValue = [], onChange, placeholder = 'Select options', name, max, disabled = false, className = '' }: MultiSelectProps) => {
     const id = useId()
     const state = stateOf(error, success)
     const text = error ?? success ?? hint
@@ -407,8 +443,8 @@ export const MultiSelect = ({ label, hint, error, success, options, value, defau
     }
 
     return (
-        <div className='flex w-full flex-col gap-1'>
-            {label && <label id={`${id}-label`} htmlFor={id} className='text-sm font-medium text-neutral-800 dark:text-white'>{label}</label>}
+        <div className='flex w-full flex-col gap-1' style={accentStyle(color)}>
+            {label && <label id={`${id}-label`} htmlFor={id} className='text-sm font-medium text-neutral-800 dark:text-white'>{label}{required && <span aria-hidden='true' className='ml-0.5 text-red-600 dark:text-red-400'>*</span>}</label>}
             <div
                 ref={field}
                 onClick={() => {
@@ -421,7 +457,7 @@ export const MultiSelect = ({ label, hint, error, success, options, value, defau
                 {current.map((item) => {
                     const option = options.find((candidate) => candidate.value === item)
                     return (
-                        <span key={item} className='flex items-center gap-1 rounded-lg bg-blue-100 py-1 pl-2 pr-1 text-xs font-medium text-blue-900 dark:bg-blue-950 dark:text-blue-200'>
+                        <span key={item} className='flex items-center gap-1 rounded-lg bg-[color-mix(in_srgb,var(--blossom-accent,#f472b6)_18%,transparent)] py-1 pl-2 pr-1 text-xs font-medium text-[color-mix(in_srgb,var(--blossom-accent,#f472b6)_45%,black)] dark:bg-[color-mix(in_srgb,var(--blossom-accent,#f472b6)_20%,transparent)] dark:text-[color-mix(in_srgb,var(--blossom-accent,#f472b6)_45%,white)]'>
                             {option?.label ?? item}
                             <button
                                 type='button'
@@ -431,7 +467,7 @@ export const MultiSelect = ({ label, hint, error, success, options, value, defau
                                     event.stopPropagation()
                                     update(current.filter((candidate) => candidate !== item))
                                 }}
-                                className='rounded p-0.5 hover:bg-blue-200 dark:hover:bg-blue-900'
+                                className='rounded-lg p-0.5 hover:bg-[color-mix(in_srgb,var(--blossom-accent,#f472b6)_28%,transparent)] dark:hover:bg-[color-mix(in_srgb,var(--blossom-accent,#f472b6)_30%,transparent)]'
                             >
                                 <svg width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='3' strokeLinecap='round' aria-hidden='true'><path d='M6 6l12 12M18 6 6 18' /></svg>
                             </button>
@@ -442,6 +478,7 @@ export const MultiSelect = ({ label, hint, error, success, options, value, defau
                     ref={input}
                     id={id}
                     role='combobox'
+                    aria-describedby={text || max !== undefined ? `${id}-message` : undefined}
                     aria-expanded={open}
                     aria-controls={`${id}-list`}
                     aria-autocomplete='list'
@@ -457,20 +494,20 @@ export const MultiSelect = ({ label, hint, error, success, options, value, defau
                         setOpen(true)
                     }}
                     onKeyDown={onKeyDown}
-                    className='min-w-[80px] flex-1 bg-transparent py-0.5 text-sm outline-none placeholder:text-neutral-400'
+                    className='min-w-[80px] flex-1 bg-transparent py-0.5 text-sm text-neutral-900 outline-none dark:text-white placeholder:text-neutral-400'
                 />
                 {chevron(open)}
             </div>
             {name && current.map((item) => <input key={item} type='hidden' name={name} value={item} />)}
             {(text || max !== undefined) && (
-                <span className={`flex justify-between text-xs ${message[state]}`}>
+                <span id={`${id}-message`} className={`flex justify-between text-xs ${message[state]}`}>
                     <span>{text}</span>
                     {max !== undefined && <span>{current.length}/{max}</span>}
                 </span>
             )}
             {open && position && createPortal(
-                <ul ref={list} id={`${id}-list`} role='listbox' aria-multiselectable='true' aria-labelledby={label ? `${id}-label` : undefined} className={listBox} style={listStyle(position)}>
-                    {filtered.length === 0 && <li className='px-3 py-2 text-neutral-500'>No results</li>}
+                <ul ref={list} id={`${id}-list`} role='listbox' aria-multiselectable='true' aria-labelledby={label ? `${id}-label` : undefined} className={listBox} style={accentStyle(color, listStyle(position))}>
+                    {filtered.length === 0 && <li className='px-3 py-2 text-neutral-500'>{noResultsLabel}</li>}
                     {filtered.map((option, index) => {
                         const checked = current.includes(option.value)
                         const blocked = option.disabled || (!checked && limitReached)
@@ -484,9 +521,9 @@ export const MultiSelect = ({ label, hint, error, success, options, value, defau
                                 onPointerEnter={() => !blocked && setActive(index)}
                                 onMouseDown={(event) => event.preventDefault()}
                                 onClick={() => !blocked && toggle(option)}
-                                className={`flex cursor-pointer items-center gap-3 rounded-lg px-3 py-2 ${blocked ? 'cursor-not-allowed opacity-40' : ''} ${index === active ? 'bg-blue-100 text-blue-900 dark:bg-blue-950 dark:text-blue-200' : 'text-neutral-800 dark:text-neutral-200'}`}
+                                className={`flex cursor-pointer items-center gap-3 rounded-lg px-3 py-2 ${blocked ? 'cursor-not-allowed opacity-40' : ''} ${index === active ? 'bg-[color-mix(in_srgb,var(--blossom-accent,#f472b6)_18%,transparent)] text-[color-mix(in_srgb,var(--blossom-accent,#f472b6)_45%,black)] dark:bg-[color-mix(in_srgb,var(--blossom-accent,#f472b6)_20%,transparent)] dark:text-[color-mix(in_srgb,var(--blossom-accent,#f472b6)_45%,white)]' : 'text-neutral-800 dark:text-neutral-200'}`}
                             >
-                                <span className={`flex h-4 w-4 shrink-0 items-center justify-center rounded border-2 ${checked ? 'border-blue-600 bg-blue-600 text-white' : 'border-neutral-300 dark:border-neutral-600'}`}>
+                                <span className={`flex h-4 w-4 shrink-0 items-center justify-center rounded-md border-2 ${checked ? 'border-[var(--blossom-accent,#f472b6)] bg-[var(--blossom-accent,#f472b6)] text-[var(--blossom-accent-contrast,#fff)]' : 'border-neutral-300 dark:border-neutral-600'}`}>
                                     {checked && (
                                         <svg className='h-2.5 w-2.5' aria-hidden='true' xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='currentColor' strokeWidth='4'><path strokeLinecap='round' strokeLinejoin='round' d='m5 12 5 5L20 7' /></svg>
                                     )}
@@ -508,10 +545,12 @@ export interface CheckboxProps extends Omit<InputHTMLAttributes<HTMLInputElement
     description?: string
     /** Shows a dash instead of the check, for "some selected" states. */
     indeterminate?: boolean
+    /** Error message. It is shown in red under the label and marks the checkbox as invalid. */
+    error?: string
 }
 
 /** The native input is hidden but still receives focus, keyboard and form events. */
-export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(({ label, description, indeterminate = false, className = '', ...props }, ref) => {
+export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(({ label, description, indeterminate = false, error, color, className = '', ...props }, ref) => {
     const inner = useRef<HTMLInputElement | null>(null)
 
     useEffect(() => {
@@ -519,7 +558,7 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(({ label, de
     }, [indeterminate])
 
     return (
-        <label className='group inline-flex cursor-pointer items-start gap-3 text-sm [&:has(:disabled)]:cursor-not-allowed [&:has(:disabled)]:opacity-60'>
+        <label className='group inline-flex cursor-pointer items-start gap-3 text-sm [&:has(:disabled)]:cursor-not-allowed [&:has(:disabled)]:opacity-60' style={accentStyle(color)}>
             <input
                 ref={(node) => {
                     inner.current = node
@@ -527,10 +566,11 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(({ label, de
                     else if (ref) ref.current = node
                 }}
                 type='checkbox'
+                aria-invalid={Boolean(error) || undefined}
                 className={`peer sr-only ${className}`}
                 {...props}
             />
-            <span className='mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-lg border-2 border-neutral-300 bg-white text-transparent transition-colors group-hover:border-blue-600 peer-checked:border-blue-600 peer-checked:bg-blue-600 peer-checked:text-white peer-indeterminate:border-blue-600 peer-indeterminate:bg-blue-600 peer-indeterminate:text-white peer-focus-visible:ring-2 peer-focus-visible:ring-blue-600/50 dark:border-neutral-600 dark:bg-neutral-900'>
+            <span data-error={Boolean(error)} className='data-[error=true]:!border-red-500 mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-md border-2 border-neutral-300 bg-white text-transparent transition-colors group-hover:border-[var(--blossom-accent,#f472b6)] peer-checked:border-[var(--blossom-accent,#f472b6)] peer-checked:bg-[var(--blossom-accent,#f472b6)] peer-checked:text-white peer-indeterminate:border-[var(--blossom-accent,#f472b6)] peer-indeterminate:bg-[var(--blossom-accent,#f472b6)] peer-indeterminate:text-white peer-focus-visible:ring-2 peer-focus-visible:ring-[color-mix(in_srgb,var(--blossom-accent,#f472b6)_50%,transparent)] dark:border-neutral-600 dark:bg-neutral-900'>
                 {indeterminate ? (
                     <svg className='h-3 w-3' aria-hidden='true' xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='currentColor' strokeWidth='4'><path strokeLinecap='round' d='M6 12h12' /></svg>
                 ) : (
@@ -538,8 +578,9 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(({ label, de
                 )}
             </span>
             <span className='flex flex-col'>
-                <span className='text-neutral-800 dark:text-white'>{label}</span>
+                <span className='text-neutral-800 dark:text-white'>{label}{props.required && <span aria-hidden='true' className='ml-0.5 text-red-600 dark:text-red-400'>*</span>}</span>
                 {description && <span className='text-xs text-neutral-500'>{description}</span>}
+                {error && <span role='alert' className='text-xs text-red-700 dark:text-red-400'>{error}</span>}
             </span>
         </label>
     )
@@ -551,10 +592,10 @@ export interface RadioProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 
     description?: string
 }
 
-export const Radio = forwardRef<HTMLInputElement, RadioProps>(({ label, description, className = '', ...props }, ref) => (
-    <label className='group inline-flex cursor-pointer items-start gap-3 text-sm [&:has(:disabled)]:cursor-not-allowed [&:has(:disabled)]:opacity-60'>
+export const Radio = forwardRef<HTMLInputElement, RadioProps>(({ label, description, color, className = '', ...props }, ref) => (
+    <label className='group inline-flex cursor-pointer items-start gap-3 text-sm [&:has(:disabled)]:cursor-not-allowed [&:has(:disabled)]:opacity-60' style={accentStyle(color)}>
         <input ref={ref} type='radio' className={`peer sr-only ${className}`} {...props} />
-        <span className="relative mt-0.5 h-5 w-5 shrink-0 rounded-full border-2 border-neutral-300 bg-white transition-colors after:absolute after:left-1/2 after:top-1/2 after:h-2 after:w-2 after:-translate-x-1/2 after:-translate-y-1/2 after:scale-0 after:rounded-full after:bg-blue-600 after:transition-transform after:content-[''] group-hover:border-blue-600 peer-checked:border-blue-600 peer-checked:after:scale-100 peer-focus-visible:ring-2 peer-focus-visible:ring-blue-600/50 dark:border-neutral-600 dark:bg-neutral-900" />
+        <span className="relative mt-0.5 h-5 w-5 shrink-0 rounded-full border-2 border-neutral-300 bg-white transition-colors after:absolute after:left-1/2 after:top-1/2 after:h-2 after:w-2 after:-translate-x-1/2 after:-translate-y-1/2 after:scale-0 after:rounded-full after:bg-[var(--blossom-accent,#f472b6)] after:transition-transform after:content-[''] group-hover:border-[var(--blossom-accent,#f472b6)] peer-checked:border-[var(--blossom-accent,#f472b6)] peer-checked:after:scale-100 peer-focus-visible:ring-2 peer-focus-visible:ring-[color-mix(in_srgb,var(--blossom-accent,#f472b6)_50%,transparent)] dark:border-neutral-600 dark:bg-neutral-900" />
         <span className='flex flex-col'>
             <span className='text-neutral-800 dark:text-white'>{label}</span>
             {description && <span className='text-xs text-neutral-500'>{description}</span>}
@@ -580,7 +621,7 @@ export interface RadioGroupProps extends FieldProps {
 }
 
 /** A set of radios that share a name and report the chosen value. */
-export const RadioGroup = ({ name, label, hint, error, success, options, value, defaultValue = '', onChange, direction = 'vertical' }: RadioGroupProps) => {
+export const RadioGroup = ({ required, color, name, label, hint, error, success, options, value, defaultValue = '', onChange, direction = 'vertical' }: RadioGroupProps) => {
     const id = useId()
     const [internal, setInternal] = useState(defaultValue)
     const current = value ?? internal
@@ -588,8 +629,8 @@ export const RadioGroup = ({ name, label, hint, error, success, options, value, 
     const text = error ?? success ?? hint
 
     return (
-        <div role='radiogroup' aria-labelledby={label ? `${id}-label` : undefined} className='flex flex-col gap-2'>
-            {label && <span id={`${id}-label`} className='text-sm font-medium text-neutral-800 dark:text-white'>{label}</span>}
+        <div role='radiogroup' aria-required={required || undefined} aria-labelledby={label ? `${id}-label` : undefined} aria-describedby={text ? `${id}-message` : undefined} className='flex flex-col gap-2' style={accentStyle(color)}>
+            {label && <span id={`${id}-label`} className='text-sm font-medium text-neutral-800 dark:text-white'>{label}{required && <span aria-hidden='true' className='ml-0.5 text-red-600 dark:text-red-400'>*</span>}</span>}
             <div className={`flex gap-3 ${direction === 'vertical' ? 'flex-col' : 'flex-wrap gap-6'}`}>
                 {options.map((option) => (
                     <Radio
@@ -607,7 +648,7 @@ export const RadioGroup = ({ name, label, hint, error, success, options, value, 
                     />
                 ))}
             </div>
-            {text && <span className={`text-xs ${message[state]}`}>{text}</span>}
+            {text && <span id={`${id}-message`} className={`text-xs ${message[state]}`}>{text}</span>}
         </div>
     )
 }
@@ -616,10 +657,10 @@ export interface SwitchProps extends Omit<InputHTMLAttributes<HTMLInputElement>,
     label: string
 }
 
-export const Switch = forwardRef<HTMLInputElement, SwitchProps>(({ label, className = '', ...props }, ref) => (
-    <label className='inline-flex cursor-pointer items-center gap-3 text-sm text-neutral-800 dark:text-white'>
+export const Switch = forwardRef<HTMLInputElement, SwitchProps>(({ label, color, className = '', ...props }, ref) => (
+    <label className='inline-flex cursor-pointer items-center gap-3 text-sm text-neutral-800 dark:text-white' style={accentStyle(color)}>
         <input ref={ref} type='checkbox' role='switch' className={`peer sr-only ${className}`} {...props} />
-        <span className="relative h-6 w-11 rounded-full bg-neutral-300 transition-colors after:absolute after:left-0.5 after:top-0.5 after:h-5 after:w-5 after:rounded-full after:bg-white after:shadow after:transition-transform after:content-[''] peer-checked:bg-blue-600 peer-checked:after:translate-x-5 peer-focus-visible:ring-2 peer-focus-visible:ring-blue-600/50 peer-disabled:opacity-60 dark:bg-neutral-700" />
+        <span className="relative h-6 w-11 rounded-full bg-neutral-300 transition-colors after:absolute after:left-0.5 after:top-0.5 after:h-5 after:w-5 after:rounded-full after:bg-white after:shadow after:transition-transform after:content-[''] peer-checked:bg-[var(--blossom-accent,#f472b6)] peer-checked:after:translate-x-5 peer-focus-visible:ring-2 peer-focus-visible:ring-[color-mix(in_srgb,var(--blossom-accent,#f472b6)_50%,transparent)] peer-disabled:opacity-60 dark:bg-neutral-700" />
         {label}
     </label>
 ))

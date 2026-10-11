@@ -7,8 +7,11 @@ import { Button } from "./ui/Button";
 import { Alert } from "./ui/Alert";
 import { Checkbox, Input, Select } from "./ui/Forms";
 import { Skeleton } from "./ui/Skeleton";
+import ArqBanner from "./ArqBanner";
+import ArqComparison from "./ArqComparison";
+import ArqRewardBanner from "./ArqRewardBanner";
 import { useTaxSettings } from "@/app/context/TaxProvider";
-import { calcTaxes, CARD_APPLIES, getProvince, TaxApplicability, IVA_RATE, PERCEPCION_RATE, PROVINCES } from "@/lib/taxes";
+import { calcArqTotal, calcTaxes, CARD_APPLIES, getProvince, TaxApplicability, IVA_RATE, PERCEPCION_RATE, PROVINCES } from "@/lib/taxes";
 
 type DollarName = 'Dólar Tarjeta' | 'Videojuegos' | 'Dólar MEP' | 'Dólar Cripto'
 type DollarSource = 'oficial' | 'bolsa' | 'cripto'
@@ -78,15 +81,15 @@ export default function Calculator() {
 
     const rows: { key: 'iva' | 'iibb' | 'percepcion'; label: string; amount: number; hint?: string }[] = [
         { key: 'iva', label: `IVA ${pct(IVA_RATE)}`, amount: taxes.iva },
-        { key: 'iibb', label: `IIBB${province && province.iibb ? ' ' + pct(province.iibb) : ''}`, amount: taxes.iibb },
+        { key: 'iibb', label: `IIBB${province ? ' ' + pct(province.iibb) : ''}`, amount: taxes.iibb },
         { key: 'percepcion', label: `Percepción ${pct(PERCEPCION_RATE)}`, amount: taxes.percepcion, hint: applies.percepcion ? 'Anticipo de Ganancias/Bienes Personales (RG 5617), recuperable si no pagás esos impuestos' : dollar.percepcionHint },
     ]
 
     const currencyOptions = CURRENCIES.map(c => ({ value: c.code, label: c.label }))
-    const provinceOptions = PROVINCES.map(p => ({ value: p.id, label: `${p.name}${p.iibb ? ` · ${pct(p.iibb)}` : ''}` }))
+    const provinceOptions = [...PROVINCES].sort((x, y) => x.name.localeCompare(y.name, 'es')).map(p => ({ value: p.id, label: `${p.name} · ${pct(p.iibb)}` }))
 
     return (
-        <section className="flex flex-col gap-5 w-full animate-fade-up">
+        <section className="relative flex flex-col gap-5 w-full animate-fade-up">
             {isUSD ? (
                 <div role="radiogroup" aria-label="Tipo de dólar" className="grid grid-cols-2 gap-2">
                     {DOLLARS.map(d => (
@@ -101,6 +104,7 @@ export default function Calculator() {
                     Para {currencyCode} se usa la cotización oficial del día.
                 </p>
             )}
+
 
             <div className="relative">
                 <Input aria-label={`Monto en ${currencyCode}`} type="number" inputMode="decimal" min={0} placeholder="0.00" maxLength={17} className="!pr-24 !py-3.5 text-lg font-semibold"
@@ -151,8 +155,20 @@ export default function Calculator() {
                 </div>
             </div>
 
+            <span className="text-xs text-neutral-500">El total puede variar unos pocos pesos, por eso recomendamos siempre sumar un poco más de lo calculado. Las alícuotas de IIBB son de percepción sobre servicios digitales del exterior y pueden cambiar según la norma provincial vigente.</span>
+
+            {isUSD && selected === 'Videojuegos' && rates.dollars.oficial && value > 0 && (
+                <ArqComparison cardTotal={taxes.total} arqTotal={calcArqTotal(value, rates.dollars.oficial)} />
+            )}
+
+            {isUSD && selected === 'Videojuegos' && (
+                <>
+                    <ArqBanner />
+                    <ArqRewardBanner />
+                </>
+            )}
+
             {error && <Alert color="red" showIcon dismissible>No pudimos obtener la cotización actual. Revisá tu conexión e intentá de nuevo.</Alert>}
-            <span className="text-xs text-neutral-500">Los precios pueden variar unos centavos debido al redondeo de decimales. Las alícuotas de IIBB son de percepción sobre servicios digitales del exterior y pueden cambiar según la norma provincial vigente.</span>
         </section>
     )
 }
