@@ -15,3 +15,15 @@ export const ARQ_REWARD: { usd: number; minSpendUsd: number; creditDays: number;
     creditDays: 3,
     validDays: 30,
 }
+
+// Fecha de la última verificación de alícuotas y reglas (ver docs/VERIFICACION.md). Actualizala en cada
+// verificación: se muestra en las páginas y en llms.txt como señal de frescura.
+export const DATA_REVIEWED_ISO = "2026-10-09"
+
+export function formatReviewedDate(): string {
+  return new Date(`${DATA_REVIEWED_ISO}T12:00:00-03:00`).toLocaleDateString("es-AR", { day: "numeric", month: "long", year: "numeric", timeZone: "America/Argentina/Buenos_Aires" })
+}
+
+export const AUTHOR_NAME = "juanigarciadev"
+export const AUTHOR_URL = "https://github.com/juanigarciadev"
+export const REPO_URL = "https://github.com/juanigarciadev/impuestAR"

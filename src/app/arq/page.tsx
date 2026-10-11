@@ -6,6 +6,8 @@ import { Accordion } from "@/components/ui/Accordion";
 import { Stepper } from "@/components/ui/Stepper";
 import ArqReferralButton from "@/components/ArqReferralButton";
 import ArqRewardBanner from "@/components/ArqRewardBanner";
+import JsonLd from "@/components/JsonLd";
+import { absoluteUrl, breadcrumbLd } from "@/lib/seo";
 
 const STEPS = [
     { title: "Descargá ARQ", description: "Instalá la app desde App Store o Google Play y registrate." },
@@ -21,9 +23,36 @@ const FAQ = [
     { id: "costo", title: "¿Cuánto cuesta la tarjeta?", content: "La tarjeta virtual local es gratuita. Revisá en la app las condiciones vigentes de la tarjeta física y de la carga de saldo." },
 ]
 
+const JSON_LD = [
+    breadcrumbLd([["Calculadora", "/"], ["Pagar con ARQ", "/arq"]]),
+    {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        mainEntity: FAQ.map(item => ({
+            "@type": "Question",
+            name: item.title,
+            acceptedAnswer: { "@type": "Answer", text: item.content },
+        })),
+    },
+    {
+        "@context": "https://schema.org",
+        "@type": "HowTo",
+        name: "Cómo pagar en Steam con la tarjeta local de ARQ",
+        inLanguage: "es-AR",
+        url: absoluteUrl("/arq"),
+        step: STEPS.map((step, index) => ({
+            "@type": "HowToStep",
+            position: index + 1,
+            name: step.title,
+            text: step.description,
+        })),
+    },
+]
+
 export default function Arq() {
     return (
         <article className="flex flex-col gap-6 w-full animate-fade-up">
+            <JsonLd data={JSON_LD} />
             <div className="flex items-center justify-between gap-3">
                 <h1 className="font-bold text-lg dark:text-white">Pagá Steam con ARQ</h1>
                 <ButtonLink href="/" color="secondary" icon={<ArrowLeft size={16} />}>Calculadora</ButtonLink>

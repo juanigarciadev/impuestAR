@@ -13,6 +13,7 @@ const LINKS = [
     { label: "Calculadora", href: "/" },
     { label: "Suscripciones", href: "/servicios" },
     { label: "Pagar con ARQ", href: "/arq" },
+    { label: "Metodología", href: "/metodologia" },
 ]
 
 export default function Footer() {

@@ -40,7 +40,7 @@ Cotizaciones constantemente actualizadas mediante [DolarApi](https://dolarapi.co
 - [Tailwind CSS](https://tailwindcss.com/) 3
 - Componentes de [BlossomUI](https://blossomui.vercel.app/) (`Select`, `Checkbox`, `Input`, `Button`, `Modal`, `Badge`, `Alert` y `Skeleton`, adaptados a la paleta azul del proyecto)
 - [Lucide](https://lucide.dev/) para los íconos
-- SEO: metadata, Open Graph, JSON-LD, `sitemap.xml`, `robots.txt` y `llms.txt`
+- SEO y GEO: metadata y Open Graph por página con imagen para compartir (`public/og.png`), JSON-LD (WebSite, WebApplication, FAQPage, HowTo, BreadcrumbList), contenido explicativo estático en la home, página de metodología con fuentes, `sitemap.xml`, `robots.txt` y un `llms.txt` generado desde las mismas constantes de impuestos
 
 ## Estructura
 
@@ -50,7 +50,10 @@ src/
   components/     Calculadora, suscripciones, modal y demás componentes
   components/ui/  Componentes de BlossomUI
   lib/taxes.ts    Alícuotas, provincias y cálculo de impuestos
-  lib/site.ts     Dominio y descripción del sitio
+  lib/site.ts     Dominio, descripción, link de referido de ARQ y fecha de última revisión
+  lib/seo.ts      Helpers de datos estructurados e imagen para compartir
+  app/api/revision  Formulario "Solicitar una revisión" (envía un mail con Resend)
+  app/llms.txt    llms.txt generado desde lib/taxes.ts
 scripts/          Chequeo automático (verificar.mjs)
 docs/             Guía de verificación periódica
 ```
@@ -65,7 +68,14 @@ npm run dev        # servidor de desarrollo en http://localhost:3000
 npm run verificar  # chequea cotizaciones, logos y muestra precios e impuestos cargados
 ```
 
-Variable opcional: `NEXT_PUBLIC_SITE_URL` para definir el dominio público (sitemap, canonical y Open Graph).
+Variables de entorno:
+
+| Variable | Para qué |
+|---|---|
+| `NEXT_PUBLIC_SITE_URL` | (opcional) dominio público: sitemap, canonical y Open Graph |
+| `RESEND_API_KEY` | clave de [Resend](https://resend.com) para enviar los pedidos de revisión por mail |
+| `REVIEW_TO_EMAIL` / `REVIEW_FROM_EMAIL` | (opcionales) destino y remitente del mail de revisión |
+| `UPSTASH_REDIS_REST_URL` / `UPSTASH_REDIS_REST_TOKEN` | (opcionales) contador compartido para el límite por IP del formulario |
 
 ## Mantenimiento
 

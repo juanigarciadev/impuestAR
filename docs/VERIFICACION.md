@@ -59,7 +59,7 @@ Si algo cambia, actualizar en este orden:
 
 1. `PERCEPCION_RATE` / `IVA_RATE` y el comentario del encabezado de `taxes.ts`.
 2. `CARD_APPLIES` y los `applies` de `DOLLARS` en `Calculator.tsx` (qué impuestos corresponden a cada modo, y los `percepcionHint`).
-3. `public/llms.txt` y `README.md` (sección Impuestos).
+3. `README.md` (sección Impuestos) y `DATA_REVIEWED_ISO` en `src/lib/site.ts` (fecha de última revisión que muestran las páginas). `llms.txt` y `/metodologia` se generan solos desde `taxes.ts`.
 4. La clave `STORAGE_KEY` de `src/app/context/TaxProvider.tsx` (subir de versión, por ejemplo `tax-settings-v3`) si cambian los valores por defecto, para descartar preferencias guardadas.
 
 **Dudas abiertas que conviene seguir intentando confirmar:**
@@ -97,8 +97,8 @@ Servicios cargados hoy: YouTube Premium, Spotify, Crunchyroll, Netflix, Disney+,
 ## Paso 6. Verificaciones de código
 
 1. `npx tsc --noEmit` debe dar 0 errores.
-2. Que `README.md`, `public/llms.txt` y los textos de `Calculator.tsx` digan lo mismo que `taxes.ts`.
-3. Que `NEXT_PUBLIC_SITE_URL` o `SITE_URL` en `src/lib/site.ts` apunten al dominio real, y que `public/llms.txt` use el mismo dominio.
+2. Que `README.md`, los textos de `Calculator.tsx`, las preguntas frecuentes de `HomeInfo.tsx` y la página `/metodologia` digan lo mismo que `taxes.ts`. `llms.txt` se genera desde `taxes.ts`.
+3. Que `NEXT_PUBLIC_SITE_URL` o `SITE_URL` en `src/lib/site.ts` apunten al dominio real, (`llms.txt` y el sitemap lo toman de ahí).
 
 ## Paso 7. Reporte al usuario
 

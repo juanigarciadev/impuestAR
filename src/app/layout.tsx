@@ -1,5 +1,7 @@
 import type { Metadata, Viewport } from "next";
-import { SITE_URL, SITE_NAME, SITE_DESCRIPTION } from "@/lib/site";
+import { SITE_URL, SITE_NAME, SITE_DESCRIPTION, AUTHOR_NAME, AUTHOR_URL, REPO_URL } from "@/lib/site";
+import JsonLd from "@/components/JsonLd";
+import { SOCIAL_IMAGE } from "@/lib/seo";
 import "./globals.css";
 import { Inter } from 'next/font/google'
 import { ThemeProvider } from "./context/ThemeProvider";
@@ -27,12 +29,15 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "es_AR",
+    url: "/",
     siteName: SITE_NAME,
+    images: [SOCIAL_IMAGE],
     title: "impuestAR | Calculá el precio del dólar con impuestos",
     description: SITE_DESCRIPTION,
   },
   twitter: {
-    card: "summary",
+    card: "summary_large_image",
+    images: [SOCIAL_IMAGE.url],
     title: "impuestAR | Calculá el precio del dólar con impuestos",
     description: SITE_DESCRIPTION,
   },
@@ -45,17 +50,41 @@ export const viewport: Viewport = {
 
 const themeScript = `try{var t=localStorage.getItem("theme");if(t==="dark"||(!t&&matchMedia("(prefers-color-scheme: dark)").matches))document.documentElement.classList.add("dark")}catch(e){}`;
 
-const jsonLd = {
-  "@context": "https://schema.org",
-  "@type": "WebApplication",
-  name: SITE_NAME,
-  url: SITE_URL,
-  description: SITE_DESCRIPTION,
-  applicationCategory: "FinanceApplication",
-  operatingSystem: "Any",
-  inLanguage: "es-AR",
-  offers: { "@type": "Offer", price: "0", priceCurrency: "ARS" },
-};
+const jsonLd = [
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "@id": `${SITE_URL}/#website`,
+    name: SITE_NAME,
+    url: SITE_URL,
+    description: SITE_DESCRIPTION,
+    inLanguage: "es-AR",
+    publisher: { "@id": `${SITE_URL}/#author` },
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "@id": `${SITE_URL}/#app`,
+    name: SITE_NAME,
+    url: SITE_URL,
+    description: SITE_DESCRIPTION,
+    applicationCategory: "FinanceApplication",
+    operatingSystem: "Any",
+    inLanguage: "es-AR",
+    isAccessibleForFree: true,
+    offers: { "@type": "Offer", price: "0", priceCurrency: "ARS" },
+    author: { "@id": `${SITE_URL}/#author` },
+    isBasedOn: REPO_URL,
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "@id": `${SITE_URL}/#author`,
+    name: AUTHOR_NAME,
+    url: AUTHOR_URL,
+    sameAs: [AUTHOR_URL, REPO_URL],
+  },
+]
 
 export default function RootLayout({
   children,
@@ -67,7 +96,7 @@ export default function RootLayout({
       <body className={`${inter.className} min-h-screen bg-white text-neutral-900 antialiased dark:bg-neutral-900 dark:text-white`}>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
         <div aria-hidden="true" className="bg-glow" />
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+        <JsonLd data={jsonLd} />
         <ThemeProvider>
           <TaxProvider>
               <div className="w-full flex justify-center">
