@@ -30,6 +30,21 @@
     .animate-pop { animation: pop .2s ease-out both; }
 }
 
+/* Carteles de ARQ (modo Videojuegos): debajo de la calculadora en pantallas chicas y como aside a su
+   derecha desde 1280px. Se usan media queries propias porque `screens` del proyecto solo define max-width. */
+.arq-aside { display: none; }
+@media (min-width: 1280px) {
+    .arq-aside {
+        display: flex;
+        position: absolute;
+        top: 0;
+        left: 100%;
+        margin-left: 20px;
+        width: min(393px, calc(50vw - 256px));
+    }
+    .arq-inline { display: none; }
+}
+
 @keyframes fade-up { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
 @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
 @keyframes pop { from { opacity: 0; transform: scale(.96); } to { opacity: 1; transform: none; } }

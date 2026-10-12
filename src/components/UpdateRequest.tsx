@@ -1,5 +1,5 @@
 "use client"
-import { FormEvent, useState } from "react"
+import { FormEvent, useEffect, useState } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { Send } from "lucide-react"
@@ -21,6 +21,17 @@ export default function UpdateRequest() {
     const [consent, setConsent] = useState(false)
     const [sending, setSending] = useState(false)
     const [error, setError] = useState("")
+
+    // Otros componentes (por ejemplo el modal de una suscripción) pueden abrir el formulario con un mensaje prearmado
+    useEffect(() => {
+        const onOpen = (event: Event) => {
+            const detail = (event as CustomEvent<{ message?: string }>).detail
+            if (detail?.message) setMessage(detail.message)
+            setOpen(true)
+        }
+        window.addEventListener("impuestar:revision", onOpen)
+        return () => window.removeEventListener("impuestar:revision", onOpen)
+    }, [])
 
     const close = () => {
         if (sending) return

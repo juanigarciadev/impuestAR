@@ -56,8 +56,13 @@ async function checkRates() {
 async function checkServices() {
   console.log("\n== Suscripciones (src/app/mocks/servicesMock.ts) ==")
   const src = readFileSync(new URL("../src/app/mocks/servicesMock.ts", import.meta.url), "utf8")
-  const services = [...src.matchAll(/name:\s*"([^"]+)",\s*price:\s*(\d+),\s*logo:\s*"([^"]+)",\s*duration:\s*"([^"]+)"/g)]
-    .map(m => ({ name: m[1], price: Number(m[2]), logo: m[3], duration: m[4] }))
+  // El mock es datos planos de JS: se evalúa sin el export para leer servicios y planes
+  let services
+  try {
+    services = new Function(`${src.replace(/export default SERVICES;?/, "")}; return SERVICES`)()
+  } catch {
+    services = []
+  }
   if (!services.length) return log("fail", "No se pudo leer ningún servicio del mock (¿cambió el formato?)")
 
   for (const s of services) {
@@ -70,8 +75,23 @@ async function checkServices() {
     }
   }
 
-  console.log("\nPrecios actuales en el mock (sin impuestos). Contrastar con la página oficial de cada servicio en Argentina:")
-  console.table(services.map(({ name, price, duration }) => ({ servicio: name, "precio ARS": price, periodo: duration })))
+  const DAY = 24 * 60 * 60 * 1000
+  for (const s of services) {
+    if (!s.verifiedAt) {
+      log("warn", `${s.name}: sin verifiedAt (precio sin verificar)`)
+      continue
+    }
+    const days = Math.floor((Date.now() - new Date(`${s.verifiedAt}T12:00:00-03:00`).getTime()) / DAY)
+    if (days > 30) log("warn", `${s.name}: verificado hace ${days} días (${s.verifiedAt}), revisar contra la página oficial`)
+  }
+
+  console.log("\nPrecios actuales en el mock (sin impuestos; USD se convierte con el dólar oficial). Contrastar con la página oficial de cada servicio:")
+  console.table(services.flatMap(s => s.plans.map(p => ({
+    servicio: s.name,
+    plan: p.name,
+    precio: `${p.currency === "USD" ? "US$ " : "$"}${p.price}`,
+    periodo: p.duration ?? s.duration,
+  }))))
 }
 
 // 3) Constantes impositivas vigentes en el código (para tenerlas a la vista al revisar normativa)

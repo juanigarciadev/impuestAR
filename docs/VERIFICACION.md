@@ -88,11 +88,28 @@ Para cada servicio:
 
 1. Buscar el precio vigente del plan más usado en Argentina en la página oficial del servicio (ejemplos de búsqueda: `precio Netflix Argentina plan estándar [mes año]`). Priorizar la página oficial; usar notas de prensa solo para contrastar.
 2. **Determinar si el precio publicado ya incluye impuestos.** Si incluye IVA, IIBB o percepción, dividir para llegar al precio sin impuestos: `precio_sin_impuestos = precio_publicado / (1 + IVA + otros_incluidos)`. Si el servicio publica en dólares, convertir con la cotización oficial del día. Dejar anotado qué se asumió.
-3. Si el precio cambió, actualizar `price` en el mock. Si el servicio dejó de existir o cambió de nombre (por ejemplo "max"), actualizar `name`.
+3. Si el precio cambió, actualizar `price` en el mock. Si el servicio dejó de existir o cambió de nombre, actualizar `name`. Si no se consigue el precio de un servicio de forma confiable, es válido sacarlo de la lista (se hizo con max en octubre de 2026).
 4. Verificar que el plan sea el mismo que ya estaba (estándar, individual, etc.). No cambiar de plan sin avisar al usuario.
 5. Si hay servicios nuevos populares para sumar, proponérselos al usuario, no agregarlos solo.
 
-Servicios cargados hoy: YouTube Premium, Spotify, Crunchyroll, Netflix, Disney+, max, Amazon Prime Video, Apple TV, Hulu, Paramount. Los precios del último relevamiento se imprimen con `npm run verificar`.
+Servicios cargados hoy: YouTube Premium, Spotify, Crunchyroll, Netflix, Disney+, Amazon Prime Video, Apple TV, Hulu y Paramount. Cada servicio tiene una lista de `plans` (de menor a mayor precio): la app los muestra todos en el modal y usa el más barato (sin requisitos) para el "desde" de la tarjeta.
+
+Cada servicio lleva `verifiedAt` (AAAA-MM-DD): la fecha en que se contrastó con su página oficial. **Actualizala en cada verificación**: el modal la muestra ("Precios verificados el…") y `npm run verificar` avisa si pasaron más de 30 días o si falta. Los servicios sin fecha se muestran como "sin verificar". El modal también tiene el botón "¿Cambió el precio? Avisanos", que abre el formulario de revisión con el mensaje prearmado.
+
+Formato de un plan en `servicesMock.ts`: `{ name, price, currency?: "USD", duration?: "/año", note?, restricted? }`. `restricted` marca planes con requisitos (por ejemplo estudiantes): se listan, pero no cuentan para el "desde". Los planes en `USD` se convierten con el dólar oficial en la app.
+
+Planes cargados el 12/10/2026 (precio sin impuestos, salvo que se aclare):
+
+| Servicio | Planes | Fuente |
+|---|---|---|
+| Netflix | Básico $8.999, Estándar $14.999, Premium $19.999 | help.netflix.com/es/node/24926 (el precio no incluye impuestos). No se cargaron los miembros extra ($5.399) |
+| Spotify | Estudiantes $2.299 (restringido), Individual $4.499, Duo $5.999, Familiar $7.599 | spotify.com/ar/premium (precio + impuestos; no se usa la oferta de 2 meses) |
+| Crunchyroll | Fan $5.199, Mega Fan $6.099 | crunchyroll.com/es (+ impuestos aplicables) |
+| Disney+ | Estándar con anuncios $9.916,53; Estándar $12.891,74; Premium $19.833,88; anuales Estándar $107.437,19 y Premium $165.288,43 | help.disneyplus.com/es-AR/article/disneyplus-price (valores "sin impuestos nacionales") |
+| Paramount | Estándar $5.578,51 y Premium $7.768,60 | paramountplus.com/ar. El precio mostrado es neto de IVA (finales: 6.750 y 9.400) |
+| Apple TV | US$ 14,99; con Peacock Premium US$ 17,99 (desde); con Peacock Premium Plus US$ 22,99 | tv.apple.com, tienda de EE. UU. en dólares (no es el precio en pesos de Argentina) |
+| Hulu | 11 planes en US$ (Hulu y bundles con Disney+, ESPN y HBO Max, más el anual) | help.hulu.com/article/hulu-how-much-does-hulu-cost. Sin Live TV, add-ons ni planes legacy |
+| YouTube Premium, Amazon Prime Video | Sin cambios | Sin contrastar |
 
 ## Paso 6. Verificaciones de código
 
@@ -115,4 +132,5 @@ Agregar una fila por verificación (la más reciente arriba).
 
 | Fecha | Qué se revisó | Cambios | Pendientes |
 |---|---|---|---|
+| 2026-10-12 | Precios y todos los planes de Netflix, Spotify, Crunchyroll, Disney+, Paramount, Apple TV y Hulu según sus páginas oficiales (pasados por el usuario); se quitó max por falta de una fuente confiable; el mock pasó a tener `plans` | `servicesMock.ts`, `lib/services.ts`, tarjeta y modal | YouTube Premium y Amazon Prime Video sin contrastar; Apple TV y Hulu en USD (tienda de EE. UU.) |
 | 2026-10-09 | Alta inicial de la guía. Modos de cálculo definidos, percepción 30% reincorporada (la nota que la daba por eliminada era una broma del Día de los Inocentes), IIBB cargado para 11 jurisdicciones, logos de max y Apple TV corregidos | Ver commits | Base de la percepción (con o sin IVA), IVA en pagos con dólares propios, San Juan con una sola fuente, precios de suscripciones sin contrastar con páginas oficiales |

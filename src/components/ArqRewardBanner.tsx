@@ -10,9 +10,9 @@ export default function ArqRewardBanner({ showMore = true }: { showMore?: boolea
     const { usd, minSpendUsd, creditDays, validDays } = ARQ_REWARD
 
     const steps = [
-        { title: "Registrate", text: "con el botón de abajo" },
-        { title: `Gastá ${minSpendUsd} USD`, text: `en los primeros ${validDays} días` },
-        { title: `Recibí ${usd} USD`, text: `en ${creditDays} días, en tu cuenta` },
+        "Registrate con el botón de abajo",
+        `Gastá ${minSpendUsd} USD en los primeros ${validDays} días`,
+        `Recibís ${usd} USD en ${creditDays} días, en tu cuenta de ARQ`,
     ]
 
     const cta = "inline-flex w-fit items-center gap-2 rounded-xl bg-blue-700 px-4 py-2.5 text-sm font-semibold text-white hover:bg-blue-800 dark:bg-blue-600 dark:hover:bg-blue-500 active:scale-[.99] duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-700 dark:focus-visible:outline-blue-400"
@@ -32,18 +32,17 @@ export default function ArqRewardBanner({ showMore = true }: { showMore?: boolea
                     <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-blue-700 dark:text-blue-300">
                         <Gift size={14} aria-hidden /> Beneficio para usuarios nuevos
                     </span>
-                    <span className="text-lg font-bold leading-tight text-neutral-900 dark:text-white">
+                    <span className="text-lg font-bold leading-tight text-balance text-neutral-900 dark:text-white">
                         Registrate en ARQ y llevate {usd} USD
                     </span>
                 </div>
             </div>
 
-            <ol className="grid grid-cols-3 gap-2">
+            <ol className="flex flex-col gap-2">
                 {steps.map((step, index) => (
-                    <li key={step.title} className="flex flex-col gap-1 rounded-xl border border-blue-100 bg-white/80 p-3 dark:border-slate-700 dark:bg-slate-800/70">
-                        <span className="flex h-5 w-5 items-center justify-center rounded-full bg-blue-100 text-xs font-bold text-blue-700 dark:bg-blue-500/20 dark:text-blue-300">{index + 1}</span>
-                        <span className="text-sm font-semibold leading-tight text-neutral-900 dark:text-white">{step.title}</span>
-                        <span className="text-xs leading-snug text-neutral-600 dark:text-slate-300">{step.text}</span>
+                    <li key={step} className="flex items-start gap-3 text-sm text-neutral-700 dark:text-slate-200">
+                        <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-blue-100 text-xs font-bold text-blue-700 dark:bg-blue-500/20 dark:text-blue-300">{index + 1}</span>
+                        <span className="pt-0.5">{step}</span>
                     </li>
                 ))}
             </ol>

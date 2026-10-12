@@ -9,7 +9,6 @@ import { Checkbox, Input, Select } from "./ui/Forms";
 import { Skeleton } from "./ui/Skeleton";
 import ArqBanner from "./ArqBanner";
 import ArqComparison from "./ArqComparison";
-import ArqRewardBanner from "./ArqRewardBanner";
 import { useTaxSettings } from "@/app/context/TaxProvider";
 import { calcArqTotal, calcTaxes, CARD_APPLIES, getProvince, TaxApplicability, IVA_RATE, PERCEPCION_RATE, PROVINCES } from "@/lib/taxes";
 
@@ -41,31 +40,54 @@ type CurrencyCode = typeof CURRENCIES[number]['code']
 const ars = (n: number) => '$' + n.toLocaleString('es-AR')
 const pct = (n: number) => (n * 100).toLocaleString('es-AR', { maximumFractionDigits: 1 }) + '%'
 
-type Rates = { dollars: Partial<Record<DollarSource, number>>; currencies: Partial<Record<CurrencyCode, number>> }
+type Rates = {
+    dollars: Partial<Record<DollarSource, number>>
+    currencies: Partial<Record<CurrencyCode, number>>
+    /** Fecha de actualización (ISO) que informa DolarApi, por cotización: oficial, bolsa, cripto o código de moneda. */
+    dates: Record<string, string | undefined>
+}
+
+// Precios habituales de juegos en USD, como atajos del monto
+const GAME_PRICES = [20, 40, 70, 80]
+
+const formatUpdated = (iso: string) =>
+    new Date(iso).toLocaleString('es-AR', { day: 'numeric', month: 'numeric', hour: '2-digit', minute: '2-digit', timeZone: 'America/Argentina/Buenos_Aires' })
 
 export default function Calculator() {
     const { settings, update } = useTaxSettings()
-    const [rates, setRates] = useState<Rates>({ dollars: {}, currencies: {} })
+    const [rates, setRates] = useState<Rates>({ dollars: {}, currencies: {}, dates: {} })
     const [error, setError] = useState(false)
     const [currencyCode, setCurrencyCode] = useState<CurrencyCode>('USD')
     const [selected, setSelected] = useState<DollarName>('Dólar Tarjeta')
     const [value, setValue] = useState(0)
+    // Texto del campo: se controla para poder cargarlo desde los atajos de precio
+    const [amount, setAmount] = useState('')
 
     useEffect(() => {
         fetch('https://dolarapi.com/v1/dolares')
             .then(response => response.json())
-            .then((data: { casa: string; venta: number }[]) => {
+            .then((data: { casa: string; venta: number; fechaActualizacion?: string }[]) => {
                 const venta = (casa: string) => data.find(d => d.casa === casa)?.venta
-                setRates(prev => ({ ...prev, dollars: { oficial: venta('oficial'), bolsa: venta('bolsa'), cripto: venta('cripto') } }))
+                const fecha = (casa: string) => data.find(d => d.casa === casa)?.fechaActualizacion
+                setRates(prev => ({
+                    ...prev,
+                    dollars: { oficial: venta('oficial'), bolsa: venta('bolsa'), cripto: venta('cripto') },
+                    dates: { ...prev.dates, oficial: fecha('oficial'), bolsa: fecha('bolsa'), cripto: fecha('cripto') },
+                }))
             })
             .catch(() => setError(true))
 
         fetch('https://dolarapi.com/v1/cotizaciones')
             .then(response => response.json())
-            .then((data: { moneda: string; venta: number }[]) => {
+            .then((data: { moneda: string; venta: number; fechaActualizacion?: string }[]) => {
                 const currencies: Rates['currencies'] = {}
-                for (const c of CURRENCIES) currencies[c.code] = data.find(d => d.moneda === c.code)?.venta
-                setRates(prev => ({ ...prev, currencies }))
+                const dates: Rates['dates'] = {}
+                for (const c of CURRENCIES) {
+                    const found = data.find(d => d.moneda === c.code)
+                    currencies[c.code] = found?.venta
+                    dates[c.code] = found?.fechaActualizacion
+                }
+                setRates(prev => ({ ...prev, currencies, dates: { ...prev.dates, ...dates } }))
             })
             .catch(() => setError(true))
     }, [])
@@ -78,6 +100,7 @@ export default function Calculator() {
     const applies = isUSD ? dollar.applies : CARD_APPLIES
     const taxes = calcTaxes(value * rate, settings, applies)
     const province = getProvince(settings.province)
+    const updatedAt = isUSD ? rates.dates[dollar.source] : rates.dates[currencyCode]
 
     const rows: { key: 'iva' | 'iibb' | 'percepcion'; label: string; amount: number; hint?: string }[] = [
         { key: 'iva', label: `IVA ${pct(IVA_RATE)}`, amount: taxes.iva },
@@ -86,6 +109,7 @@ export default function Calculator() {
     ]
 
     const currencyOptions = CURRENCIES.map(c => ({ value: c.code, label: c.label }))
+    const showArq = isUSD && selected === 'Videojuegos'
     const provinceOptions = [...PROVINCES].sort((x, y) => x.name.localeCompare(y.name, 'es')).map(p => ({ value: p.id, label: `${p.name} · ${pct(p.iibb)}` }))
 
     return (
@@ -108,18 +132,30 @@ export default function Calculator() {
 
             <div className="relative">
                 <Input aria-label={`Monto en ${currencyCode}`} type="number" inputMode="decimal" min={0} placeholder="0.00" maxLength={17} className="!pr-24 !py-3.5 text-lg font-semibold"
-                    onChange={(e) => setValue(Number(e.target.value))}
-                    onInput={(e) => {
-                        const input = e.target as HTMLInputElement;
-                        if (input.value.length > 17) {
-                            input.value = input.value.slice(0, 17);
-                        }
+                    value={amount}
+                    onChange={(e) => {
+                        const text = e.target.value.slice(0, 17)
+                        setAmount(text)
+                        setValue(Number(text))
                     }} />
                 <div className="absolute right-3 top-1/2 -translate-y-1/2">
                     <Select compact options={currencyOptions} value={currencyCode} onChange={(v) => setCurrencyCode(v as CurrencyCode)} />
                 </div>
             </div>
 
+            {showArq && (
+                <div role="group" aria-label="Precios habituales de juegos" className="-mt-2 flex flex-wrap items-center gap-2">
+                    <span className="text-xs text-neutral-500">Precios habituales:</span>
+                    {GAME_PRICES.map(price => (
+                        <Button key={price} size="sm" color={value === price ? 'default' : 'secondary'} rounded
+                            onClick={() => { setAmount(String(price)); setValue(price) }}>
+                            US$ {price}
+                        </Button>
+                    ))}
+                </div>
+            )}
+
+            <div className="relative">
             <div className="flex flex-col gap-3 rounded-2xl border border-neutral-300 bg-neutral-200 bg-opacity-40 p-5 shadow-sm dark:bg-neutral-800 dark:border-neutral-600 dark:text-white">
                 <div className="flex items-center justify-between text-sm text-neutral-500">
                     <span>Cotización</span>
@@ -127,6 +163,7 @@ export default function Calculator() {
                         ? <span className="font-medium text-neutral-700 dark:text-neutral-300"><AnimatedNumber value={rate} decimals={2} format={ars} /> por {currencyCode}</span>
                         : <Skeleton className="h-4 w-28" />}
                 </div>
+                {updatedAt && <span className="-mt-2 text-xs text-neutral-500">Cotización actualizada el {formatUpdated(updatedAt)}</span>}
                 <div className="flex justify-between">
                     <span className="text-neutral-600 dark:text-neutral-300">Sin impuestos</span>
                     <span className="font-medium tabular-nums"><AnimatedNumber value={taxes.base} format={ars} /></span>
@@ -147,25 +184,30 @@ export default function Calculator() {
                 ))}
 
                 <div className="flex items-center justify-between pt-3 border-t border-neutral-300 dark:border-neutral-600">
-                    <span className="font-semibold">Total</span>
+                    <span className="font-semibold">{showArq ? 'Total con tarjeta local' : 'Total'}</span>
                     <div className="flex items-center gap-3">
                         <span aria-live="polite" className="font-bold text-2xl tabular-nums"><AnimatedNumber value={taxes.total} format={ars} /></span>
                         <CopyButton valueToCopy={taxes.total} />
                     </div>
                 </div>
+                {showArq && rates.dollars.oficial && value > 0 && (
+                    <ArqComparison cardTotal={taxes.total} arqTotal={calcArqTotal(value, rates.dollars.oficial)} />
+                )}
+            </div>
+            {showArq && (
+                // En escritorio los carteles de ARQ van al costado de la tarjeta, como un aside (ver .arq-aside)
+                <aside aria-label="ARQ" className="arq-aside flex-col">
+                    <ArqBanner />
+                </aside>
+            )}
             </div>
 
             <span className="text-xs text-neutral-500">El total puede variar unos pocos pesos, por eso recomendamos siempre sumar un poco más de lo calculado. Las alícuotas de IIBB son de percepción sobre servicios digitales del exterior y pueden cambiar según la norma provincial vigente.</span>
 
-            {isUSD && selected === 'Videojuegos' && rates.dollars.oficial && value > 0 && (
-                <ArqComparison cardTotal={taxes.total} arqTotal={calcArqTotal(value, rates.dollars.oficial)} />
-            )}
-
-            {isUSD && selected === 'Videojuegos' && (
-                <>
+            {showArq && (
+                <div className="arq-inline">
                     <ArqBanner />
-                    <ArqRewardBanner />
-                </>
+                </div>
             )}
 
             {error && <Alert color="red" showIcon dismissible>No pudimos obtener la cotización actual. Revisá tu conexión e intentá de nuevo.</Alert>}
