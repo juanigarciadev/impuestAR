@@ -2,15 +2,17 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Bookmark } from "lucide-react";
 import { ButtonLink } from "@/components/ButtonLink";
 import SERVICES from "../mocks/servicesMock"
 import ServiceModal, { Service } from "@/components/ServiceModal";
 import ServiceCard from "@/components/ServiceCard";
 import TaxBadges from "@/components/TaxBadges";
+import { useSubscriptions } from "@/app/context/SubscriptionsProvider";
 
 export default function Servicios() {
     const [selectedService, setSelectedService] = useState<Service | null>(null);
+    const { items } = useSubscriptions();
 
     return (
         <section className="flex flex-col gap-3 w-full animate-fade-up">
@@ -19,6 +21,9 @@ export default function Servicios() {
                 <ButtonLink href="/" color="secondary" icon={<ArrowLeft size={16} />}>Calculadora</ButtonLink>
             </div>
             <TaxBadges />
+            <ButtonLink href="/mis-suscripciones" color="secondary" icon={<Bookmark size={16} />}>
+                Mis suscripciones{items.length ? ` (${items.length})` : ""}
+            </ButtonLink>
             <div className="flex flex-col gap-2">
                 {SERVICES.map((service) => (
                     <ServiceCard key={service.name} service={service} onSelect={setSelectedService} />

@@ -4,6 +4,8 @@ import { calcTaxes, getProvince, IVA_RATE, PERCEPCION_RATE } from "@/lib/taxes"
 import { defaultPlans, durationLabel, formatVerifiedAt, planBase, planDuration, type Plan, type Service } from "@/lib/services"
 import { useOfficialRate } from "@/lib/useOfficialRate"
 import { useTaxSettings } from "@/app/context/TaxProvider"
+import { useSubscriptions } from "@/app/context/SubscriptionsProvider"
+import { Bookmark, BookmarkCheck } from "lucide-react"
 import { Modal } from "./ui/Modal"
 import { Button } from "./ui/Button"
 import { Skeleton } from "./ui/Skeleton"
@@ -16,6 +18,7 @@ const ars = (n: number) => "$" + n.toLocaleString("es-AR")
 
 export default function ServiceModal({ service, onClose }: { service: Service; onClose: () => void }) {
     const { settings } = useTaxSettings()
+    const { has, toggle } = useSubscriptions()
     const rate = useOfficialRate(service.plans.some(plan => plan.currency === "USD"))
     const province = getProvince(settings.province)
 
@@ -104,6 +107,15 @@ export default function ServiceModal({ service, onClose }: { service: Service; o
                         <Skeleton className="h-16 w-full" />
                     )}
                 </div>
+
+                <Button
+                    color={has(service.name, plan.name) ? "secondary" : "primary"}
+                    className="!w-full"
+                    icon={has(service.name, plan.name) ? <BookmarkCheck size={16} /> : <Bookmark size={16} />}
+                    onClick={() => toggle(service.name, plan.name)}
+                >
+                    {has(service.name, plan.name) ? "Guardado en mis suscripciones (quitar)" : "Agregar a mis suscripciones"}
+                </Button>
 
                 <div className="flex flex-wrap items-center justify-between gap-2">
                     <span className="text-xs text-neutral-500">

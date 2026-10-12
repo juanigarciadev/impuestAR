@@ -6,6 +6,7 @@ import "./globals.css";
 import { Inter } from 'next/font/google'
 import { ThemeProvider } from "./context/ThemeProvider";
 import { TaxProvider } from "./context/TaxProvider";
+import { SubscriptionsProvider } from "./context/SubscriptionsProvider";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SupportBanner from "@/components/Support";
@@ -100,6 +101,7 @@ export default function RootLayout({
         <JsonLd data={jsonLd} />
         <ThemeProvider>
           <TaxProvider>
+          <SubscriptionsProvider>
               <div className="w-full flex justify-center">
                 <main className="w-full max-w-[440px] min-h-screen pb-6 mx-4 flex flex-col gap-6">
                   <Header/>
@@ -111,6 +113,7 @@ export default function RootLayout({
                   <Footer/>
                 </main>
               </div>
+          </SubscriptionsProvider>
           </TaxProvider>
         </ThemeProvider>
       </body>

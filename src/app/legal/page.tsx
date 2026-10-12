@@ -63,7 +63,7 @@ export default function Legal() {
                         <strong>Dirección IP:</strong> se usa de forma temporal para limitar los envíos y evitar abusos del formulario. Además, el hosting registra datos técnicos de las visitas.
                     </li>
                     <li>
-                        <strong>Preferencias en tu navegador:</strong> el tema (claro/oscuro) y tus ajustes de impuestos se guardan en el almacenamiento local de tu navegador. No salen de tu dispositivo, no se usan para identificarte y no se usan cookies de seguimiento ni herramientas de analítica.
+                        <strong>Preferencias en tu navegador:</strong> el tema (claro/oscuro), tus ajustes de impuestos y tu lista de &ldquo;Mis suscripciones&rdquo; se guardan en el almacenamiento local de tu navegador. No salen de tu dispositivo, no se usan para identificarte y no se usan cookies de seguimiento ni herramientas de analítica.
                     </li>
                 </ul>
 

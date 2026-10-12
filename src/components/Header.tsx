@@ -9,6 +9,7 @@ import SoftLinks from "./SoftLinks";
 const LINKS = [
     { label: "Calculadora", href: "/" },
     { label: "Suscripciones", href: "/servicios" },
+    { label: "Mis suscripciones", href: "/mis-suscripciones" },
     { label: "Pagar con ARQ", href: "/arq" },
     { label: "Metodología", href: "/metodologia" },
 ]
