@@ -134,6 +134,10 @@ Verificado el 12/10/2026 en la ayuda oficial de ARQ ([Steamcito x ARQ](https://w
 - En un link de referido propio, la recompensa **depende de la campaña que ARQ asigne** al registrarse y puede no incluir nada para el usuario nuevo; el monto y el plazo los muestra la app.
 - Por eso `ARQ_REWARD` en `src/lib/site.ts` está en `null`: no se promete ningún monto. Cargarlo solo si ARQ confirma las condiciones de la campaña propia.
 
+## Novedades (changelog)
+
+La página `/novedades` sale de `src/lib/changelog.ts`. Cuando un cambio se vea en la web (precios, planes, funciones, ajustes de impuestos), sumá un punto a la entrada del día o creá una nueva arriba. En la verificación semanal, si cambió un precio o un impuesto, también va una línea ahí.
+
 ## Pruebas automáticas
 
 `npm test` corre `scripts/impuestar.test.mjs` (Node 24, sin dependencias): cálculo de impuestos, provincias, redondeo de ARQ, planes y catálogo de suscripciones, y exportación/importación. Correlo antes de subir cambios a `taxes.ts`, `services.ts` o al mock de precios.

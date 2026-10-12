@@ -3,6 +3,8 @@ import JsonLd from "./JsonLd";
 import { Accordion } from "./ui/Accordion";
 import { calcTaxes, IVA_RATE, PERCEPCION_RATE } from "@/lib/taxes";
 import { formatReviewedDate } from "@/lib/site";
+import { LATEST_CHANGE_DATE } from "@/lib/changelog";
+import { formatVerifiedAt } from "@/lib/services";
 
 const ars = (n: number) => "$" + n.toLocaleString("es-AR")
 
@@ -92,6 +94,9 @@ export default function HomeInfo() {
             <JsonLd data={JSON_LD} />
             <h2 className="font-bold text-lg text-neutral-900 dark:text-white">Preguntas frecuentes</h2>
             <Accordion variant="separated" items={items} />
+            <p className="text-xs text-neutral-500">
+                Última novedad: {formatVerifiedAt(LATEST_CHANGE_DATE)}. <Link href="/novedades" className="underline underline-offset-2">Ver novedades</Link>
+            </p>
         </section>
     )
 }

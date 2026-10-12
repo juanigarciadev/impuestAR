@@ -17,6 +17,7 @@ import {
 import { defaultPlans, durationLabel, planBase, planDuration } from "../src/lib/services.ts"
 import { exportCode, exportJson, parseSubscriptions } from "../src/lib/subscriptionsIO.ts"
 import SERVICES from "../src/app/mocks/servicesMock.ts"
+import { CHANGELOG, LATEST_CHANGE_DATE } from "../src/lib/changelog.ts"
 
 const all = { iva: true, iibb: true, percepcion: true, province: "caba" }
 const NO_PERCEPCION = { iva: true, iibb: true, percepcion: false }
@@ -147,4 +148,17 @@ test("mis suscripciones: entradas inválidas y saneamiento", () => {
   )
   assert.deepEqual(sanitized, { items: [{ service: "A", plan: "B" }], people: 20 })
   assert.equal(parseSubscriptions("x".repeat(30000)), null)
+})
+
+test("novedades: fechas válidas, de más nueva a más vieja, sin entradas vacías", () => {
+  assert.ok(CHANGELOG.length >= 1)
+  const dates = CHANGELOG.map(e => e.date)
+  for (const date of dates) assert.match(date, /^\d{4}-\d{2}-\d{2}$/)
+  assert.deepEqual(dates, [...dates].sort().reverse())
+  assert.equal(new Set(dates).size, dates.length)
+  assert.equal(LATEST_CHANGE_DATE, dates[0])
+  for (const entry of CHANGELOG) {
+    assert.ok(entry.title.length > 0)
+    assert.ok(entry.changes.length > 0 && entry.changes.every(c => c.trim().length > 0))
+  }
 })

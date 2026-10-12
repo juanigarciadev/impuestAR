@@ -22,6 +22,7 @@ export function GET() {
 - [Suscripciones](${SITE_URL}/servicios): precios finales con impuestos de plataformas de streaming, música y más.
 - [Pagar Steam con ARQ](${SITE_URL}/arq): cómo funciona la tarjeta local de ARQ, cómo activarla y por qué evita el IVA en compras de Steam.
 - [Metodología y fuentes](${SITE_URL}/metodologia): cotizaciones, alícuotas, fórmula, IIBB por provincia y limitaciones.
+- [Novedades](${SITE_URL}/novedades): historial de cambios del sitio (precios, planes, funciones y ajustes).
 
 ## Impuestos considerados
 - IVA ${pct(IVA_RATE)} sobre servicios digitales del exterior.
