@@ -19,6 +19,7 @@ const STEPS = [
 
 const NINTENDO_URL = "https://es-americas-support.nintendo.com/app/answers/detail/a_id/56073/~/preguntas-y-respuestas-de-nintendo-eshop-de-nintendo-switch-en-argentina,"
 const PLAYSTATION_URL = "https://www.playstation.com/es-ar/support/store/"
+const ARQ_HELP_URL = "https://www.arqfinance.com/es-AR/help/articles/steamcito-x-arq"
 const link = "underline underline-offset-2"
 
 // `text` es la versión en texto plano para los datos estructurados cuando `content` lleva enlaces
@@ -27,10 +28,10 @@ const FAQ: { id: string; title: string; content: ReactNode; text?: string }[] = 
     {
         id: "local-global",
         title: "¿Tarjeta local o global?",
-        text: "Según la ayuda de ARQ, para Steam se usa la tarjeta local (azul) y la global (verde) es para otros pagos en moneda extranjera o en el exterior. Pero cada tienda decide qué tarjetas acepta: PlayStation avisa que puede no aceptar tarjetas registradas en otras regiones, y la Nintendo eShop de cada país de la región solo acepta tarjetas de ese país. Antes de pagar, revisá las condiciones de la tienda.",
+        text: "Según la ayuda de ARQ, para Steam se usa la tarjeta local (azul) y para otros consumos en moneda extranjera o pagos en el exterior, como PlayStation, la global (verde). Pero cada tienda decide qué tarjetas acepta: PlayStation avisa que puede no aceptar tarjetas registradas en otras regiones, y la Nintendo eShop de cada país de la región solo acepta tarjetas de ese país. Antes de pagar, revisá las condiciones de la tienda.",
         content: (
             <>
-                Según la ayuda de ARQ, para Steam se usa la tarjeta local (azul) y la global (verde) es para otros pagos en moneda extranjera o en el exterior. Pero <strong>cada tienda decide qué tarjetas acepta</strong>:{" "}
+                Según <a href={ARQ_HELP_URL} className={link} target="_blank" rel="noopener noreferrer">la ayuda de ARQ</a>, para Steam se usa la tarjeta local (azul) y para otros consumos en moneda extranjera o pagos en el exterior, como PlayStation, la global (verde). Pero <strong>cada tienda decide qué tarjetas acepta</strong>:{" "}
                 <a href={PLAYSTATION_URL} className={link} target="_blank" rel="noopener noreferrer">PlayStation avisa</a> que puede no aceptar tarjetas registradas en otras regiones, y{" "}
                 <a href={NINTENDO_URL} className={link} target="_blank" rel="noopener noreferrer">la Nintendo eShop</a> de cada país de la región solo acepta tarjetas de ese país. Antes de pagar, revisá las condiciones de la tienda.
             </>

@@ -66,6 +66,7 @@ Requiere Node 24.x.
 npm install
 npm run dev        # servidor de desarrollo en http://localhost:3000
 npm run verificar  # chequea cotizaciones, logos y muestra precios e impuestos cargados
+npm test           # pruebas de impuestos, provincias, ARQ, catálogo y exportación
 ```
 
 Variables de entorno:

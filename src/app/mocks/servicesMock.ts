@@ -31,6 +31,8 @@ const SERVICES = [
         plans: [
             { name: "Fan", price: 5199, note: "1 dispositivo a la vez" },
             { name: "Mega Fan", price: 6099, note: "4 dispositivos a la vez, descargas y Game Vault" },
+            { name: "Fan anual", price: 37399, duration: "/año", unverified: true },
+            { name: "Mega Fan anual", price: 43899, duration: "/año", unverified: true },
         ],
     },
     {
@@ -103,6 +105,7 @@ const SERVICES = [
         plans: [
             { name: "Estándar", price: 5578.51, note: "Full HD y 2 transmisiones simultáneas" },
             { name: "Premium", price: 7768.6, note: "4K UHD y 4 transmisiones simultáneas" },
+            { name: "Estándar anual", price: 50206.61, duration: "/año", unverified: true },
         ],
     },
 ];

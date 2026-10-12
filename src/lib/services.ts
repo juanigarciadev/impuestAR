@@ -10,6 +10,8 @@ export type Plan = {
   note?: string
   /** Plan con requisitos (por ejemplo estudiantes): se lista, pero no se usa para el "desde" ni como plan inicial. */
   restricted?: boolean
+  /** Precio tomado de un tercero y todavía no contrastado con la página oficial del servicio. */
+  unverified?: boolean
 }
 
 export type Service = {

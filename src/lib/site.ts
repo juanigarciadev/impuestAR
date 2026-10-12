@@ -7,14 +7,12 @@ export const SITE_DESCRIPTION =
 // Link de registro en ARQ (con código de referido). Mientras esté vacío no se muestra el botón.
 export const ARQ_REFERRAL_URL = "https://www.arqfinance.com/referrals/arr?referralCode=juanigarciadev_su4&pid=referral&c=arr&is_retargeting=true"
 
-// Beneficio de bienvenida que se promociona en el banner de Videojuegos. Poné `null` para ocultar el banner.
-// Confirmá estos datos en la app de ARQ antes de publicarlos: son condiciones de ARQ y pueden cambiar.
-export const ARQ_REWARD: { usd: number; minSpendUsd: number; creditDays: number; validDays: number } | null = {
-    usd: 3,
-    minSpendUsd: 30,
-    creditDays: 3,
-    validDays: 30,
-}
+// Beneficio de bienvenida de ARQ que se promociona en el cartel de Videojuegos y en /arq. Con `null` no se muestra.
+// Verificado el 12/10/2026: los "3 USD por gastar 30 USD en 30 días" son una promoción específica de Steamcito x ARQ
+// (https://www.arqfinance.com/es-AR/help/articles/steamcito-x-arq) y solo aplican a quienes se registran con el
+// link de Steamcito. La recompensa de un link de referido propio depende de la campaña que ARQ le asigne, así que no
+// se promete ningún monto. Cargá acá el beneficio solo si ARQ confirma las condiciones de tu campaña.
+export const ARQ_REWARD: { usd: number; minSpendUsd: number; creditDays: number; validDays: number } | null = null
 
 // Fecha de la última verificación de alícuotas y reglas (ver docs/VERIFICACION.md). Actualizala en cada
 // verificación: se muestra en las páginas y en llms.txt como señal de frescura.

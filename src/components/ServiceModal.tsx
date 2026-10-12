@@ -80,6 +80,9 @@ export default function ServiceModal({ service, onClose }: { service: Service; o
 
                 <div className="flex flex-col gap-2 border-t border-neutral-200 pt-3 dark:border-neutral-700">
                     {service.plans.length > 1 && <span className="text-sm text-neutral-500">{plan.name} · {durationLabel(planDuration(plan, service))}</span>}
+                    {plan.unverified && (
+                        <span className="text-xs text-amber-600 dark:text-amber-400">Precio de una fuente no oficial: todavía no lo contrastamos con la página del servicio.</span>
+                    )}
                     {plan.currency === "USD" && (
                         <div className="flex justify-between text-sm text-neutral-500">
                             <span>Precio en dólares</span>

@@ -10,7 +10,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "verificar": "node scripts/verificar.mjs"
+    "verificar": "node scripts/verificar.mjs",
+    "test": "node --test --no-warnings \"scripts/**/*.test.mjs\""
   },
   "dependencies": {
     "firebase": "^11.1.0",

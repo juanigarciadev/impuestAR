@@ -96,7 +96,7 @@ Servicios cargados hoy: YouTube Premium, Spotify, Crunchyroll, Netflix, Disney+,
 
 Cada servicio lleva `verifiedAt` (AAAA-MM-DD): la fecha en que se contrastó con su página oficial. **Actualizala en cada verificación**: el modal la muestra ("Precios verificados el…") y `npm run verificar` avisa si pasaron más de 30 días o si falta. Los servicios sin fecha se muestran como "sin verificar". El modal también tiene el botón "¿Cambió el precio? Avisanos", que abre el formulario de revisión con el mensaje prearmado.
 
-Formato de un plan en `servicesMock.ts`: `{ name, price, currency?: "USD", duration?: "/año", note?, restricted? }`. `restricted` marca planes con requisitos (por ejemplo estudiantes): se listan, pero no cuentan para el "desde". Los planes en `USD` se convierten con el dólar oficial en la app.
+Formato de un plan en `servicesMock.ts`: `{ name, price, currency?: "USD", duration?: "/año", note?, restricted?, unverified? }`. `unverified` marca precios tomados de una fuente no oficial: el modal avisa que todavía no se contrastaron; sacale el flag cuando los verifiques. `restricted` marca planes con requisitos (por ejemplo estudiantes): se listan, pero no cuentan para el "desde". Los planes en `USD` se convierten con el dólar oficial en la app.
 
 Planes cargados el 12/10/2026 (precio sin impuestos, salvo que se aclare):
 
@@ -104,9 +104,9 @@ Planes cargados el 12/10/2026 (precio sin impuestos, salvo que se aclare):
 |---|---|---|
 | Netflix | Básico $8.999, Estándar $14.999, Premium $19.999 | help.netflix.com/es/node/24926 (el precio no incluye impuestos). No se cargaron los miembros extra ($5.399) |
 | Spotify | Estudiantes $2.299 (restringido), Individual $4.499, Duo $5.999, Familiar $7.599 | spotify.com/ar/premium (precio + impuestos; no se usa la oferta de 2 meses) |
-| Crunchyroll | Fan $5.199, Mega Fan $6.099 | crunchyroll.com/es (+ impuestos aplicables) |
+| Crunchyroll | Fan $5.199, Mega Fan $6.099; anuales Fan $37.399 y Mega Fan $43.899 (`unverified`) | crunchyroll.com/es (+ impuestos aplicables). Los anuales salen del catálogo de Impuestito: contrastar con la página oficial |
 | Disney+ | Estándar con anuncios $9.916,53; Estándar $12.891,74; Premium $19.833,88; anuales Estándar $107.437,19 y Premium $165.288,43 | help.disneyplus.com/es-AR/article/disneyplus-price (valores "sin impuestos nacionales") |
-| Paramount | Estándar $5.578,51 y Premium $7.768,60 | paramountplus.com/ar. El precio mostrado es neto de IVA (finales: 6.750 y 9.400) |
+| Paramount | Estándar $5.578,51 y Premium $7.768,60; anual Estándar $50.206,61 (`unverified`) | paramountplus.com/ar. El precio mostrado es neto de IVA (finales: 6.750 y 9.400). El anual sale del catálogo de Impuestito: contrastar con la página oficial |
 | Apple TV | US$ 14,99; con Peacock Premium US$ 17,99 (desde); con Peacock Premium Plus US$ 22,99 | tv.apple.com, tienda de EE. UU. en dólares (no es el precio en pesos de Argentina) |
 | Hulu | 11 planes en US$ (Hulu y bundles con Disney+, ESPN y HBO Max, más el anual) | help.hulu.com/article/hulu-how-much-does-hulu-cost. Sin Live TV, add-ons ni planes legacy |
 | YouTube Premium, Amazon Prime Video | Sin cambios | Sin contrastar |
@@ -126,11 +126,24 @@ Entregar un resumen corto con:
 - **Fallas automáticas:** logos rotos, endpoints caídos, etc.
 - Si no hubo nada nuevo, decirlo en una línea.
 
+## Beneficio de bienvenida de ARQ
+
+Verificado el 12/10/2026 en la ayuda oficial de ARQ ([Steamcito x ARQ](https://www.arqfinance.com/es-AR/help/articles/steamcito-x-arq) y [Requisitos para recibir una recompensa por referidos](https://www.arqfinance.com/es-AR/help/articles/requirements-to-receive-a-reward-for-referrals)):
+
+- Los **3 USDc por gastar 30 USD en los primeros 30 días** (acreditados en hasta 3 días) son una promoción **específica de Steamcito x ARQ**: solo aplica a nuevos usuarios que se registran desde el link de Steamcito.
+- En un link de referido propio, la recompensa **depende de la campaña que ARQ asigne** al registrarse y puede no incluir nada para el usuario nuevo; el monto y el plazo los muestra la app.
+- Por eso `ARQ_REWARD` en `src/lib/site.ts` está en `null`: no se promete ningún monto. Cargarlo solo si ARQ confirma las condiciones de la campaña propia.
+
+## Pruebas automáticas
+
+`npm test` corre `scripts/impuestar.test.mjs` (Node 24, sin dependencias): cálculo de impuestos, provincias, redondeo de ARQ, planes y catálogo de suscripciones, y exportación/importación. Correlo antes de subir cambios a `taxes.ts`, `services.ts` o al mock de precios.
+
 ## Registro de verificaciones
 
 Agregar una fila por verificación (la más reciente arriba).
 
 | Fecha | Qué se revisó | Cambios | Pendientes |
 |---|---|---|---|
+| 2026-10-12 | Beneficio de 3 USD de ARQ: promoción exclusiva de Steamcito x ARQ, no aplica al link propio (se quitó de la web). Planes anuales de Crunchyroll y Paramount agregados desde Impuestito, sin verificar | `site.ts`, `servicesMock.ts` | Contrastar los anuales y conocer la campaña del link propio (la app lo muestra) |
 | 2026-10-12 | Precios y todos los planes de Netflix, Spotify, Crunchyroll, Disney+, Paramount, Apple TV y Hulu según sus páginas oficiales (pasados por el usuario); se quitó max por falta de una fuente confiable; el mock pasó a tener `plans` | `servicesMock.ts`, `lib/services.ts`, tarjeta y modal | YouTube Premium y Amazon Prime Video sin contrastar; Apple TV y Hulu en USD (tienda de EE. UU.) |
 | 2026-10-09 | Alta inicial de la guía. Modos de cálculo definidos, percepción 30% reincorporada (la nota que la daba por eliminada era una broma del Día de los Inocentes), IIBB cargado para 11 jurisdicciones, logos de max y Apple TV corregidos | Ver commits | Base de la percepción (con o sin IVA), IVA en pagos con dólares propios, San Juan con una sola fuente, precios de suscripciones sin contrastar con páginas oficiales |
