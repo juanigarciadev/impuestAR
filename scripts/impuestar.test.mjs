@@ -11,6 +11,7 @@ import {
   PERCEPCION_RATE,
   PROVINCES,
   calcArqTotal,
+  calcPlanTaxes,
   calcTaxes,
   getProvince,
 } from "../src/lib/taxes.ts"
@@ -161,4 +162,19 @@ test("novedades: fechas válidas, de más nueva a más vieja, sin entradas vací
     assert.ok(entry.title.length > 0)
     assert.ok(entry.changes.length > 0 && entry.changes.every(c => c.trim().length > 0))
   }
+})
+
+test("planes con IVA incluido (YouTube): no se suma IVA y la percepción va sobre el precio", () => {
+  // Cargo real del 08/10/2026: compra de $6.699,00 + percepción RG 5617 de $2.025,19 (total $8.724,19)
+  const settings = { iva: true, iibb: true, percepcion: true, province: "mendoza" }
+  const youtube = SERVICES.find(s => s.name === "YouTube Premium")
+  const duo = youtube.plans.find(p => p.name === "Duo")
+  assert.equal(duo.ivaIncluded, true)
+  const t = calcPlanTaxes(duo.price, settings, duo)
+  assert.equal(t.iva, 0)
+  assert.equal(t.percepcion, 2010)
+  assert.equal(t.total, 8709)
+  assert.ok(Math.abs(t.total - 8724.19) / 8724.19 < 0.005, "debería quedar a menos de 0,5% del cargo real")
+  // Un plan sin la marca sigue sumando IVA
+  assert.equal(calcPlanTaxes(10000, settings, {}).iva, 2100)
 })

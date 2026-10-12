@@ -16,7 +16,7 @@ import { useTaxSettings } from "@/app/context/TaxProvider"
 import SERVICES from "@/app/mocks/servicesMock"
 import { planBase, planDuration, type Service } from "@/lib/services"
 import { useOfficialRate } from "@/lib/useOfficialRate"
-import { calcTaxes } from "@/lib/taxes"
+import { calcPlanTaxes } from "@/lib/taxes"
 import { exportCode, exportJson, parseSubscriptions, type SubscriptionsData } from "@/lib/subscriptionsIO"
 
 const ars = (n: number) => "$" + n.toLocaleString("es-AR")
@@ -71,8 +71,8 @@ export default function MisSuscripciones() {
         const base = planBase(plan, rate)
         const annual = planDuration(plan, service) === "/año"
         const monthlyBase = base === null ? null : annual ? base / 12 : base
-        const monthly = monthlyBase === null ? null : calcTaxes(monthlyBase, settings).total
-        const full = base === null ? null : calcTaxes(base, settings).total
+        const monthly = monthlyBase === null ? null : calcPlanTaxes(monthlyBase, settings, plan).total
+        const full = base === null ? null : calcPlanTaxes(base, settings, plan).total
         return { service, plan, annual, monthly, full }
     })
     const pending = priced.some(row => row.monthly === null)

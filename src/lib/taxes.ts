@@ -102,3 +102,11 @@ export function calcArqTotal(usd: number, officialRate: number): number {
   const exact = Math.round(usd * officialRate * (1 + ARQ_RATE_PREMIUM) * 100) / 100
   return Math.ceil(exact)
 }
+
+/**
+ * Impuestos de un plan de suscripción. Si el precio publicado ya incluye el IVA (`ivaIncluded`), no se suma de nuevo;
+ * la percepción y el IIBB se calculan sobre ese monto.
+ */
+export function calcPlanTaxes(base: number, settings: TaxSettings, plan: { ivaIncluded?: boolean } = {}): TaxBreakdown {
+  return calcTaxes(base, settings, plan.ivaIncluded ? { ...CARD_APPLIES, iva: false } : CARD_APPLIES)
+}

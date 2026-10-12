@@ -4,11 +4,17 @@
 // Fuentes: docs/VERIFICACION.md.
 const SERVICES = [
     {
+        // El resumen de la tarjeta (08/10/2026) muestra solo la compra de $6.699 y la percepción RG 5617 de $2.025,19,
+        // sin una línea de IVA: Google cobra el IVA dentro del precio.
         name: "YouTube Premium",
         logo: "https://cdn.iconscout.com/icon/free/png-256/free-youtube-104-432560.png?f=webp",
         duration: "/m",
+        verifiedAt: "2026-10-12",
         plans: [
-            { name: "Individual", price: 1899 },
+            { name: "Lite", price: 2699, unverified: true, ivaIncluded: true },
+            { name: "Individual", price: 4499, unverified: true, ivaIncluded: true },
+            { name: "Duo", price: 6699, note: "2 cuentas", ivaIncluded: true },
+            { name: "Familiar", price: 10299, note: "Hasta 6 miembros, mayores de 13 años", ivaIncluded: true },
         ],
     },
     {
@@ -64,7 +70,9 @@ const SERVICES = [
         logo: "https://store-images.s-microsoft.com/image/apps.49860.14618985536919905.3e754390-a812-43d7-87fc-335159cd867b.9f1b702c-2a8b-4fdc-b65b-8a6c4e49b55f",
         duration: "/m",
         plans: [
-            { name: "Mensual", price: 3999 },
+            // Precio base sin impuestos tomado de un resumen que pasó el usuario (no de la página oficial): sin verificar
+            { name: "Mensual", price: 6500, unverified: true },
+            { name: "Anual", price: 57300, duration: "/año", unverified: true },
         ],
     },
     {

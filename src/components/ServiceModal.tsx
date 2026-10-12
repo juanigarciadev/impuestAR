@@ -1,6 +1,6 @@
 "use client"
 import { useState } from "react"
-import { calcTaxes, getProvince, IVA_RATE, PERCEPCION_RATE } from "@/lib/taxes"
+import { calcPlanTaxes, getProvince, IVA_RATE, PERCEPCION_RATE } from "@/lib/taxes"
 import { defaultPlans, durationLabel, formatVerifiedAt, planBase, planDuration, type Plan, type Service } from "@/lib/services"
 import { useOfficialRate } from "@/lib/useOfficialRate"
 import { useTaxSettings } from "@/app/context/TaxProvider"
@@ -26,10 +26,10 @@ export default function ServiceModal({ service, onClose }: { service: Service; o
     const [selected, setSelected] = useState(() => Math.max(0, service.plans.indexOf(defaultPlans(service)[0])))
     const plan: Plan = service.plans[selected]
     const base = planBase(plan, rate)
-    const taxes = base === null ? null : calcTaxes(base, settings)
+    const taxes = base === null ? null : calcPlanTaxes(base, settings, plan)
     const totalOf = (p: Plan) => {
         const b = planBase(p, rate)
-        return b === null ? null : calcTaxes(b, settings).total
+        return b === null ? null : calcPlanTaxes(b, settings, p).total
     }
 
     // Abre el formulario de revisión con el mensaje prearmado (lo escucha UpdateRequest)
@@ -40,7 +40,7 @@ export default function ServiceModal({ service, onClose }: { service: Service; o
     }
 
     const lines = taxes && [
-        { label: `IVA ${pct(IVA_RATE)}`, amount: taxes.iva, show: settings.iva },
+        { label: `IVA ${pct(IVA_RATE)}`, amount: taxes.iva, show: settings.iva && !plan.ivaIncluded },
         { label: `IIBB${province ? ` ${province.name} ${pct(province.iibb)}` : ""}`, amount: taxes.iibb, show: settings.iibb && !!province && province.iibb > 0 },
         { label: `Percepción ${pct(PERCEPCION_RATE)}`, amount: taxes.percepcion, show: settings.percepcion },
     ].filter(l => l.show)
@@ -80,6 +80,9 @@ export default function ServiceModal({ service, onClose }: { service: Service; o
 
                 <div className="flex flex-col gap-2 border-t border-neutral-200 pt-3 dark:border-neutral-700">
                     {service.plans.length > 1 && <span className="text-sm text-neutral-500">{plan.name} · {durationLabel(planDuration(plan, service))}</span>}
+                    {plan.ivaIncluded && (
+                        <span className="text-xs text-neutral-500">El precio de este plan ya incluye el IVA (así lo cobra el comercio), por eso no se suma de nuevo.</span>
+                    )}
                     {plan.unverified && (
                         <span className="text-xs text-amber-600 dark:text-amber-400">Precio de una fuente no oficial: todavía no lo contrastamos con la página del servicio.</span>
                     )}

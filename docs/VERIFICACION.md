@@ -96,7 +96,7 @@ Servicios cargados hoy: YouTube Premium, Spotify, Crunchyroll, Netflix, Disney+,
 
 Cada servicio lleva `verifiedAt` (AAAA-MM-DD): la fecha en que se contrastó con su página oficial. **Actualizala en cada verificación**: el modal la muestra ("Precios verificados el…") y `npm run verificar` avisa si pasaron más de 30 días o si falta. Los servicios sin fecha se muestran como "sin verificar". El modal también tiene el botón "¿Cambió el precio? Avisanos", que abre el formulario de revisión con el mensaje prearmado.
 
-Formato de un plan en `servicesMock.ts`: `{ name, price, currency?: "USD", duration?: "/año", note?, restricted?, unverified? }`. `unverified` marca precios tomados de una fuente no oficial: el modal avisa que todavía no se contrastaron; sacale el flag cuando los verifiques. `restricted` marca planes con requisitos (por ejemplo estudiantes): se listan, pero no cuentan para el "desde". Los planes en `USD` se convierten con el dólar oficial en la app.
+Formato de un plan en `servicesMock.ts`: `{ name, price, currency?: "USD", duration?: "/año", note?, restricted?, unverified?, ivaIncluded? }`. `ivaIncluded` marca precios que ya traen el IVA adentro (no se suma de nuevo); verificalo con un cargo real de la tarjeta antes de usarlo. `unverified` marca precios tomados de una fuente no oficial: el modal avisa que todavía no se contrastaron; sacale el flag cuando los verifiques. `restricted` marca planes con requisitos (por ejemplo estudiantes): se listan, pero no cuentan para el "desde". Los planes en `USD` se convierten con el dólar oficial en la app.
 
 Planes cargados el 12/10/2026 (precio sin impuestos, salvo que se aclare):
 
@@ -109,7 +109,8 @@ Planes cargados el 12/10/2026 (precio sin impuestos, salvo que se aclare):
 | Paramount | Estándar $5.578,51 y Premium $7.768,60; anual Estándar $50.206,61 (`unverified`) | paramountplus.com/ar. El precio mostrado es neto de IVA (finales: 6.750 y 9.400). El anual sale del catálogo de Impuestito: contrastar con la página oficial |
 | Apple TV | US$ 14,99; con Peacock Premium US$ 17,99 (desde); con Peacock Premium Plus US$ 22,99 | tv.apple.com, tienda de EE. UU. en dólares (no es el precio en pesos de Argentina) |
 | Hulu | 11 planes en US$ (Hulu y bundles con Disney+, ESPN y HBO Max, más el anual) | help.hulu.com/article/hulu-how-much-does-hulu-cost. Sin Live TV, add-ons ni planes legacy |
-| YouTube Premium, Amazon Prime Video | Sin cambios | Sin contrastar |
+| YouTube Premium | Lite $2.699 y Individual $4.499 (`unverified`, del catálogo de Impuestito); Duo $6.699 y Familiar $10.299 | Captura de la cuenta de YouTube Premium de Juani (12/10/2026): "Membresía para dos personas: ARS 6.699 al mes" y "Suscripción familiar: ARS 10.299 mensuales". Resumen de la tarjeta del 08/10/2026: compra de $6.699,00 y "Percep RG 5617 30%" de $2.025,19, **sin línea de IVA aparte**: el precio incluye el IVA (`ivaIncluded`), y la percepción se suma encima. Total real: $8.724,19. Individual y Lite siguen sin verificar |
+| Amazon Prime Video | Mensual $6.500 y Anual $57.300 (`unverified`; el anual equivale a ~$4.775 por mes) | Resumen de precios pasado por el usuario el 12/10/2026 (precio base sin impuestos, final aproximado ~$9.814 por mes): **no es la página oficial**. Anterior: $3.999, sin fuente. Contrastar con Amazon y confirmar si el IVA va aparte |
 
 ## Paso 6. Verificaciones de código
 
@@ -148,6 +149,7 @@ Agregar una fila por verificación (la más reciente arriba).
 
 | Fecha | Qué se revisó | Cambios | Pendientes |
 |---|---|---|---|
+| 2026-10-12 | YouTube Premium: planes Lite, Individual, Duo y Familiar; con un cargo real de la tarjeta (compra $6.699 + percepción RG 5617 $2.025,19, sin IVA aparte) se comprobó que el precio ya incluye el IVA (`ivaIncluded`). Amazon Prime Video: Mensual $6.500 y Anual $57.300, sin verificar | `servicesMock.ts`, `taxes.ts` (`calcPlanTaxes`), tarjeta, modal y Mis suscripciones | Contrastar Prime Video con la página oficial; Individual y Lite de YouTube sin verificar |
 | 2026-10-12 | Beneficio de 3 USD de ARQ: promoción exclusiva de Steamcito x ARQ, no aplica al link propio (se quitó de la web). Planes anuales de Crunchyroll y Paramount agregados desde Impuestito, sin verificar | `site.ts`, `servicesMock.ts` | Contrastar los anuales y conocer la campaña del link propio (la app lo muestra) |
 | 2026-10-12 | Precios y todos los planes de Netflix, Spotify, Crunchyroll, Disney+, Paramount, Apple TV y Hulu según sus páginas oficiales (pasados por el usuario); se quitó max por falta de una fuente confiable; el mock pasó a tener `plans` | `servicesMock.ts`, `lib/services.ts`, tarjeta y modal | YouTube Premium y Amazon Prime Video sin contrastar; Apple TV y Hulu en USD (tienda de EE. UU.) |
 | 2026-10-09 | Alta inicial de la guía. Modos de cálculo definidos, percepción 30% reincorporada (la nota que la daba por eliminada era una broma del Día de los Inocentes), IIBB cargado para 11 jurisdicciones, logos de max y Apple TV corregidos | Ver commits | Base de la percepción (con o sin IVA), IVA en pagos con dólares propios, San Juan con una sola fuente, precios de suscripciones sin contrastar con páginas oficiales |

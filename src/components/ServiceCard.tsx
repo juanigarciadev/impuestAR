@@ -1,5 +1,5 @@
 "use client"
-import { calcTaxes } from "@/lib/taxes"
+import { calcPlanTaxes } from "@/lib/taxes"
 import { defaultPlans, hasUsdPlans, planBase, type Service } from "@/lib/services"
 import { useOfficialRate } from "@/lib/useOfficialRate"
 import { useTaxSettings } from "@/app/context/TaxProvider"
@@ -14,9 +14,10 @@ export default function ServiceCard({ service, onSelect }: { service: Service; o
     // Se muestra el plan más barato con el período por defecto: "desde $X" si hay más de un plan
     const plans = defaultPlans(service)
     const totals = plans
-        .map(plan => planBase(plan, rate))
-        .filter((base): base is number => base !== null)
-        .map(base => calcTaxes(base, settings).total)
+        .flatMap(plan => {
+            const base = planBase(plan, rate)
+            return base === null ? [] : [calcPlanTaxes(base, settings, plan).total]
+        })
     const from = totals.length ? Math.min(...totals) : null
     const loading = usd && from === null
 

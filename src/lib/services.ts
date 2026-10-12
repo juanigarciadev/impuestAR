@@ -12,6 +12,8 @@ export type Plan = {
   restricted?: boolean
   /** Precio tomado de un tercero y todavía no contrastado con la página oficial del servicio. */
   unverified?: boolean
+  /** El precio publicado ya incluye el IVA (el comercio lo cobra adentro): no se suma de nuevo. */
+  ivaIncluded?: boolean
 }
 
 export type Service = {

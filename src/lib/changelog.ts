@@ -14,6 +14,8 @@ export const CHANGELOG: ChangelogEntry[] = [
     changes: [
       "Cada suscripción muestra todos sus planes con impuestos: Netflix, Spotify, Crunchyroll, Disney+, Paramount, Apple TV y Hulu, con precios actualizados. Se quitó max por falta de una fuente confiable.",
       "Los planes en dólares (Apple TV y Hulu) se convierten con el dólar oficial; los anuales de Crunchyroll y Paramount figuran como sin verificar.",
+      "YouTube Premium suma sus planes Lite, Individual, Duo y Familiar, sin sumar IVA de nuevo: Google ya lo cobra dentro del precio.",
+      "Amazon Prime Video actualiza su precio y suma el plan anual (sin verificar con la página oficial).",
       "Cada servicio indica cuándo se verificaron sus precios y tiene el botón \"¿Cambió el precio? Avisanos\".",
       "Mis suscripciones: armá tu lista, mirá cuánto pagás por mes y por año con impuestos, dividilo entre personas y llevalo a otro dispositivo con un link, un código o un archivo.",
       "Videojuegos: hora de la cotización, atajos de precio (US$ 20, 40, 70 y 80) y el total con ARQ dentro de la tarjeta del resultado.",
