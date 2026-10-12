@@ -25,8 +25,14 @@ export const metadata: Metadata = {
   },
   description: SITE_DESCRIPTION,
   applicationName: SITE_NAME,
+  // Verificación de propiedad en Google Search Console (etiqueta meta)
+  verification: { google: "s50tWc-03R8eGf68gnr9JlrS0g7k9QrLtDDpyr37lcM" },
   alternates: { canonical: "/" },
-  icons: { icon: "/favicon.ico", apple: "/apple-touch-icon.png" },
+  // Google pide íconos con tamaños múltiplos de 48px: además del favicon.ico (app/favicon.ico) se declara el PNG de 192px
+  icons: {
+    icon: [{ url: "/icon-192.png", sizes: "192x192", type: "image/png" }],
+    apple: "/apple-touch-icon.png",
+  },
   openGraph: {
     type: "website",
     locale: "es_AR",
