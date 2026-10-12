@@ -131,7 +131,7 @@ export default function Calculator() {
 
 
             <div className="relative">
-                <Input aria-label={`Monto en ${currencyCode}`} type="number" inputMode="decimal" min={0} placeholder="0.00" maxLength={17} className="!pr-24 !py-3.5 text-lg font-semibold"
+                <Input aria-label={`Monto en ${currencyCode}`} type="number" inputMode="decimal" min={0} placeholder="0.00" maxLength={17} className="!pr-24 !py-3.5 !text-lg font-semibold"
                     value={amount}
                     onChange={(e) => {
                         const text = e.target.value.slice(0, 17)

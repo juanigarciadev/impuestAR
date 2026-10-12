@@ -20,6 +20,7 @@ export const CHANGELOG: ChangelogEntry[] = [
       "Mis suscripciones: armá tu lista, mirá cuánto pagás por mes y por año con impuestos, dividilo entre personas y llevalo a otro dispositivo con un link, un código o un archivo.",
       "Videojuegos: hora de la cotización, atajos de precio (US$ 20, 40, 70 y 80) y el total con ARQ dentro de la tarjeta del resultado.",
       "Nuevo logo en el header y el footer, y la app se puede instalar en el celular o la compu.",
+      "En el celular, los campos de texto (como el monto) ya no hacen zoom al tocarlos.",
       "ARQ: se quitó el beneficio de 3 USD, porque es una promoción exclusiva de Steamcito x ARQ y no aplica a nuestro link.",
       "La FAQ de ARQ aclara que cada tienda decide qué tarjetas acepta, con las fuentes oficiales de PlayStation y Nintendo.",
     ],
