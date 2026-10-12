@@ -29,8 +29,8 @@ export default function Header() {
                 labels={{ navigation: "Principal", openMenu: "Abrir menú", closeMenu: "Cerrar menú" }}
                 brand={
                     <Link href="/" aria-label="impuestAR, ir al inicio">
-                        <img src="https://res.cloudinary.com/diruiumfk/image/upload/v1736373588/impuestAR_yz7khk.svg" className="w-[110px] dark:hidden" alt="impuestAR logo" />
-                        <img src="https://res.cloudinary.com/diruiumfk/image/upload/v1736374885/impuestAR-white_va9bq8.svg" className="w-[110px] hidden dark:block" alt="impuestAR logo" />
+                        <img src="/logo.svg" className="w-[110px] dark:hidden" alt="impuestAR logo" />
+                        <img src="/logo-white.svg" className="w-[110px] hidden dark:block" alt="impuestAR logo" />
                     </Link>
                 }
                 links={LINKS.map(link => ({ ...link, active: link.href === "/" ? pathname === "/" : pathname.startsWith(link.href) }))}

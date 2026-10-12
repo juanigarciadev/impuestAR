@@ -17,6 +17,8 @@ export interface FooterProps {
     labels?: { rights?: string; navigation?: string }
     /** Name of the project shown in the footer. */
     brand: string
+    /** Logo shown instead of the brand name (local patch). The brand is still used in the copyright. */
+    logo?: ReactNode
     description?: string
     /** Groups of links. With two or more groups the footer becomes a grid. */
     columns?: FooterColumn[]
@@ -31,7 +33,7 @@ export interface FooterProps {
 
 const link = 'text-neutral-600 hover:text-[color-mix(in_srgb,var(--blossom-accent,#f472b6)_85%,black)] dark:text-neutral-300'
 
-export const Footer = ({ labels, brand, description, columns, links, social, year = new Date().getFullYear(), align = 'left' }: FooterProps) => {
+export const Footer = ({ labels, brand, logo, description, columns, links, social, year = new Date().getFullYear(), align = 'left' }: FooterProps) => {
     const copyright = `© ${year} ${brand}. ${labels?.rights ?? 'All rights reserved.'}`
 
     if (columns?.length) {
@@ -39,7 +41,7 @@ export const Footer = ({ labels, brand, description, columns, links, social, yea
             <footer className='w-full rounded-xl border border-neutral-300 bg-neutral-200 bg-opacity-40 p-6 dark:border-neutral-700 dark:bg-neutral-800'>
                 <div className='grid gap-8' style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(9rem, 1fr))' }}>
                     <div className='flex flex-col gap-2'>
-                        <span className='text-xl font-bold text-neutral-900 dark:text-white'>{brand}</span>
+                        {logo ?? <span className='text-xl font-bold text-neutral-900 dark:text-white'>{brand}</span>}
                         {description && <p className='max-w-xs text-sm text-neutral-600 dark:text-neutral-300'>{description}</p>}
                     </div>
                     {columns.map((column) => (
@@ -60,7 +62,7 @@ export const Footer = ({ labels, brand, description, columns, links, social, yea
     const centered = align === 'center'
     return (
         <footer className={`flex w-full gap-4 rounded-xl border border-neutral-300 bg-neutral-200 bg-opacity-40 px-6 py-5 text-sm text-neutral-600 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-300 ${centered ? 'flex-col items-center py-8 text-center' : 'items-center justify-between max-[640px]:flex-col'}`}>
-            {centered && <span className='text-xl font-bold text-neutral-900 dark:text-white'>{brand}</span>}
+            {centered && (logo ?? <span className='text-xl font-bold text-neutral-900 dark:text-white'>{brand}</span>)}
             {!centered && <p>{copyright}</p>}
             {links && (
                 <nav aria-label={labels?.navigation ?? 'Footer'} className='flex flex-wrap items-center justify-center gap-6'>

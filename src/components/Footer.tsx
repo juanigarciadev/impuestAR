@@ -23,6 +23,12 @@ export default function Footer() {
         <BlossomFooter
             align="center"
             brand="impuestAR"
+            logo={
+                <a href="/" aria-label="impuestAR, ir al inicio">
+                    <img src="/logo.svg" className="w-[130px] dark:hidden" alt="impuestAR" />
+                    <img src="/logo-white.svg" className="w-[130px] hidden dark:block" alt="impuestAR" />
+                </a>
+            }
             labels={{ rights: "Código abierto · Cotizaciones de DolarApi", navigation: "Pie de página" }}
             links={LINKS}
             social={SOCIAL.map(({ href, label, Icon }) => (
