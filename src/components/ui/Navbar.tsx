@@ -32,7 +32,9 @@ export interface NavbarProps {
 /** True while the window is narrower than `width`. */
 const useNarrow = (width: number) => {
     const query = `(max-width: ${width - 1}px)`
-    const [narrow, setNarrow] = useState(() => typeof window !== 'undefined' && window.matchMedia(query).matches)
+    // Local patch: starts at false on the server AND on the first client render so hydration matches;
+    // the real value is read in the effect below (reading matchMedia during render caused a hydration mismatch).
+    const [narrow, setNarrow] = useState(false)
 
     useEffect(() => {
         const media = window.matchMedia(query)
