@@ -25,5 +25,6 @@ export function formatReviewedDate(): string {
 }
 
 export const AUTHOR_NAME = "juanigarciadev"
+export const CONTACT_EMAIL = "juanigarciadev@gmail.com"
 export const AUTHOR_URL = "https://github.com/juanigarciadev"
 export const REPO_URL = "https://github.com/juanigarciadev/impuestAR"

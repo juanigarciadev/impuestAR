@@ -81,7 +81,9 @@ export async function POST(request: Request) {
     const message = typeof body.message === "string" ? body.message.trim() : ""
     const email = typeof body.email === "string" ? body.email.trim() : ""
     const page = typeof body.page === "string" ? body.page.slice(0, 200) : ""
+    const consent = body.consent === true
 
+    if (!consent) return fail("Tenés que aceptar el tratamiento de tus datos para enviar el mensaje.", 400)
     if (message.length < MIN_LENGTH) return fail(`Escribí al menos ${MIN_LENGTH} caracteres.`, 400)
     if (message.length > MAX_LENGTH) return fail(`El mensaje no puede superar los ${MAX_LENGTH} caracteres.`, 400)
     if (email && (email.length > 200 || !EMAIL_RE.test(email))) return fail("El mail no parece válido.", 400)

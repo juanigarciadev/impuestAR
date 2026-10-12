@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Gamepad2 } from "lucide-react";
 import ArqReferralButton from "./ArqReferralButton";
+import ReferralNotice from "./ReferralNotice";
 
 // Banner que se muestra al entrar al modo Videojuegos: ARQ no cobra IVA ni IIBB en compras de Steam.
 export default function ArqBanner() {
@@ -16,6 +17,7 @@ export default function ArqBanner() {
                 <ArqReferralButton variant="light" />
                 <Link href="/arq" className="text-sm font-medium underline underline-offset-2 hover:opacity-80">Cómo funciona y cómo activarla</Link>
             </div>
+            <ReferralNotice className="text-white/80" />
         </div>
     )
 }

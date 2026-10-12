@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowRight, Gift } from "lucide-react";
 import { ARQ_REFERRAL_URL, ARQ_REWARD } from "@/lib/site";
+import ReferralNotice from "./ReferralNotice";
 
 // Beneficio de bienvenida de ARQ: se muestra debajo de la calculadora en Videojuegos y en /arq.
 // `showMore` muestra el link a /arq; se oculta en la propia página de ARQ.
@@ -54,6 +55,7 @@ export default function ArqRewardBanner({ showMore = true }: { showMore?: boolea
                 {showMore && <Link href="/arq" className="text-sm font-medium text-blue-700 underline underline-offset-2 hover:opacity-80 dark:text-blue-300">Cómo se activa</Link>}
             </div>
 
+            <ReferralNotice className="text-neutral-600 dark:text-slate-400" />
             <p className="text-xs text-neutral-600 dark:text-slate-400">
                 Solo para usuarios nuevos registrados con este link. El monto, el gasto mínimo y los plazos los define ARQ y pueden cambiar. La tarjeta local es gratuita.
             </p>

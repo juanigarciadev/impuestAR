@@ -14,6 +14,7 @@ const LINKS = [
     { label: "Suscripciones", href: "/servicios" },
     { label: "Pagar con ARQ", href: "/arq" },
     { label: "Metodología", href: "/metodologia" },
+    { label: "Legal y privacidad", href: "/legal" },
 ]
 
 export default function Footer() {

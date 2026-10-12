@@ -3,6 +3,7 @@ import { CreditCard, Wallet } from "lucide-react";
 import AnimatedNumber from "./AnimatedNumber";
 import ArqReferralButton from "./ArqReferralButton";
 import { Badge } from "./ui/Badge";
+import ReferralNotice from "./ReferralNotice";
 import { ARQ_RATE_PREMIUM } from "@/lib/taxes";
 
 const ars = (n: number) => '$' + n.toLocaleString('es-AR')
@@ -46,6 +47,7 @@ export default function ArqComparison({ cardTotal, arqTotal }: Props) {
             <ArqReferralButton />
             <Link href="/arq" className="text-sm font-medium underline underline-offset-2 text-green-900 dark:text-green-300">Cómo funciona y cómo activarla</Link>
 
+            <ReferralNotice />
             <span className="text-xs text-neutral-500">
                 ARQ usa su propia cotización, estimada en {(ARQ_RATE_PREMIUM * 100).toLocaleString('es-AR', { maximumFractionDigits: 1 })}% sobre la oficial, y puede variar. La tarjeta local suma los impuestos que tengas tildados arriba.
             </span>

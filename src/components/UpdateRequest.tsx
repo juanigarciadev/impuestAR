@@ -1,9 +1,10 @@
 "use client"
 import { FormEvent, useState } from "react"
+import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { Send } from "lucide-react"
 import { Button } from "./ui/Button"
-import { Input, Textarea } from "./ui/Forms"
+import { Checkbox, Input, Textarea } from "./ui/Forms"
 import { Modal } from "./ui/Modal"
 import { Toaster, useToasts } from "./ui/Toast"
 
@@ -17,6 +18,7 @@ export default function UpdateRequest() {
     const [message, setMessage] = useState("")
     const [email, setEmail] = useState("")
     const [website, setWebsite] = useState("") // campo trampa para bots
+    const [consent, setConsent] = useState(false)
     const [sending, setSending] = useState(false)
     const [error, setError] = useState("")
 
@@ -32,13 +34,17 @@ export default function UpdateRequest() {
             setError(`Escribí al menos ${MIN_LENGTH} caracteres.`)
             return
         }
+        if (!consent) {
+            setError("Para enviar el mensaje tenés que aceptar el tratamiento de tus datos.")
+            return
+        }
         setSending(true)
         setError("")
         try {
             const response = await fetch("/api/revision", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ message, email, website, page: pathname }),
+                body: JSON.stringify({ message, email, website, consent, page: pathname }),
             })
             const data = await response.json().catch(() => ({}))
             if (!response.ok) {
@@ -47,6 +53,7 @@ export default function UpdateRequest() {
             }
             setMessage("")
             setEmail("")
+            setConsent(false)
             setOpen(false)
             toast("¡Gracias! Recibimos tu mensaje", { color: "green", duration: 4000 })
         } catch {
@@ -91,6 +98,17 @@ export default function UpdateRequest() {
                         onChange={event => setEmail(event.target.value)}
                         placeholder="Para responderte"
                     />
+                    <div className="flex flex-col gap-1">
+                        <Checkbox
+                            required
+                            checked={consent}
+                            onChange={event => setConsent(event.target.checked)}
+                            label="Acepto que mi mensaje y mi mail se usen para responderme y se envíen a Resend (EE.UU.) para su entrega."
+                        />
+                        <span className="pl-8 text-xs text-neutral-500">
+                            Más información en el <Link href="/legal" className="underline underline-offset-2" onClick={close}>aviso de privacidad</Link>. Podés pedir acceso o eliminación de tus datos escribiendo a juanigarciadev@gmail.com.
+                        </span>
+                    </div>
                     {/* Campo trampa: oculto para personas */}
                     <div aria-hidden="true" className="absolute -left-[9999px] h-0 w-0 overflow-hidden">
                         <label>

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from "react";
+import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { ButtonLink } from "@/components/ButtonLink";
 import SERVICES from "../mocks/servicesMock"
@@ -23,6 +24,9 @@ export default function Servicios() {
                     <ServiceCard key={service.name} service={service} onSelect={setSelectedService} />
                 ))}
             </div>
+            <span className="text-xs text-neutral-500">
+                Los nombres y logos pertenecen a sus respectivos titulares y se usan solo para identificar cada servicio. impuestAR no está afiliado a ellos. Los precios son de referencia: <Link href="/legal" className="underline underline-offset-2">más información</Link>.
+            </span>
             {selectedService && <ServiceModal service={selectedService} onClose={() => setSelectedService(null)} />}
         </section>
     )
