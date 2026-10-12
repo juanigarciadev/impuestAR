@@ -4,6 +4,7 @@ import { ButtonLink } from "@/components/ButtonLink";
 import { Alert } from "@/components/ui/Alert";
 import { Accordion } from "@/components/ui/Accordion";
 import { Stepper } from "@/components/ui/Stepper";
+import type { ReactNode } from "react";
 import ArqReferralButton from "@/components/ArqReferralButton";
 import ArqRewardBanner from "@/components/ArqRewardBanner";
 import JsonLd from "@/components/JsonLd";
@@ -16,9 +17,25 @@ const STEPS = [
     { title: "Pagá en Steam", description: "En Steam elegí tarjeta de crédito o débito como medio de pago y cargá los datos de tu tarjeta local de ARQ (número, vencimiento y código de seguridad, que ves en la app)." },
 ]
 
-const FAQ = [
+const NINTENDO_URL = "https://es-americas-support.nintendo.com/app/answers/detail/a_id/56073/~/preguntas-y-respuestas-de-nintendo-eshop-de-nintendo-switch-en-argentina,"
+const PLAYSTATION_URL = "https://www.playstation.com/es-ar/support/store/"
+const link = "underline underline-offset-2"
+
+// `text` es la versión en texto plano para los datos estructurados cuando `content` lleva enlaces
+const FAQ: { id: string; title: string; content: ReactNode; text?: string }[] = [
     { id: "barato", title: "¿Por qué sale más barato?", content: "Con una tarjeta local común, la compra en Steam llega con el IVA de 21% de servicios digitales y, según tu provincia, Ingresos Brutos. Según la ayuda oficial de ARQ, las compras en Steam con su tarjeta local no tienen cargos extra: se convierten a la cotización del momento, sin comisiones ni recargos." },
-    { id: "local-global", title: "¿Tarjeta local o global?", content: "Para Steam usá la tarjeta local (azul). La global (verde) es para otros pagos en moneda extranjera o en el exterior, como PlayStation." },
+    {
+        id: "local-global",
+        title: "¿Tarjeta local o global?",
+        text: "Según la ayuda de ARQ, para Steam se usa la tarjeta local (azul) y la global (verde) es para otros pagos en moneda extranjera o en el exterior. Pero cada tienda decide qué tarjetas acepta: PlayStation avisa que puede no aceptar tarjetas registradas en otras regiones, y la Nintendo eShop de cada país de la región solo acepta tarjetas de ese país. Antes de pagar, revisá las condiciones de la tienda.",
+        content: (
+            <>
+                Según la ayuda de ARQ, para Steam se usa la tarjeta local (azul) y la global (verde) es para otros pagos en moneda extranjera o en el exterior. Pero <strong>cada tienda decide qué tarjetas acepta</strong>:{" "}
+                <a href={PLAYSTATION_URL} className={link} target="_blank" rel="noopener noreferrer">PlayStation avisa</a> que puede no aceptar tarjetas registradas en otras regiones, y{" "}
+                <a href={NINTENDO_URL} className={link} target="_blank" rel="noopener noreferrer">la Nintendo eShop</a> de cada país de la región solo acepta tarjetas de ese país. Antes de pagar, revisá las condiciones de la tienda.
+            </>
+        ),
+    },
     { id: "rechazo", title: "Steam me rechazó el pago", content: "Puede pasar: la aprobación depende de cómo Steam procese el pago. No es un problema de tu cuenta ni de tu tarjeta; volvé a intentar con la tarjeta local de ARQ." },
     { id: "costo", title: "¿Cuánto cuesta la tarjeta?", content: "La tarjeta virtual local es gratuita. Revisá en la app las condiciones vigentes de la tarjeta física y de la carga de saldo." },
 ]
@@ -31,7 +48,7 @@ const JSON_LD = [
         mainEntity: FAQ.map(item => ({
             "@type": "Question",
             name: item.title,
-            acceptedAnswer: { "@type": "Answer", text: item.content },
+            acceptedAnswer: { "@type": "Answer", text: item.text ?? String(item.content) },
         })),
     },
     {

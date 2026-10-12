@@ -91,6 +91,28 @@ export default function Metodologia() {
             </section>
 
             <section className="flex flex-col gap-2">
+                <h2 className={h2}>Medios de pago y tiendas</h2>
+                <p>
+                    No publicamos una tabla de qué tarjeta funciona en cada tienda: esa información cambia sin aviso, depende del procesador de pagos y casi ninguna tienda la informa oficialmente. Solo afirmamos lo que figura en fuentes oficiales (consultadas el 12 de octubre de 2026):
+                </p>
+                <ul className="flex flex-col gap-1 list-disc pl-5">
+                    <li>
+                        <strong>Nintendo eShop:</strong> según el{" "}
+                        <a href="https://es-americas-support.nintendo.com/app/answers/detail/a_id/56073/~/preguntas-y-respuestas-de-nintendo-eshop-de-nintendo-switch-en-argentina," className={link} target="_blank" rel="noopener noreferrer">Q&amp;A oficial para Argentina, Chile, Colombia y Perú</a>
+                        , el IVA lo cobra el procesador de pagos local y la eShop de cada país solo acepta tarjetas de ese mismo país.
+                    </li>
+                    <li>
+                        <strong>PlayStation Store:</strong> la{" "}
+                        <a href="https://www.playstation.com/es-ar/support/store/" className={link} target="_blank" rel="noopener noreferrer">ayuda oficial</a>{" "}
+                        indica que es posible que no se acepten tarjetas registradas en otras regiones.
+                    </li>
+                    <li>
+                        <strong>Steam, Xbox y Epic Games:</strong> no encontramos información oficial sobre medios de pago ni impuestos para Argentina, así que no hacemos afirmaciones sobre ellas más allá de los impuestos nacionales de arriba.
+                    </li>
+                </ul>
+            </section>
+
+            <section className="flex flex-col gap-2">
                 <h2 className={h2}>Limitaciones</h2>
                 <ul className="flex flex-col gap-1 list-disc pl-5">
                     <li>Los valores son orientativos: la normativa y las alícuotas cambian y cada provincia tiene su propia norma.</li>
